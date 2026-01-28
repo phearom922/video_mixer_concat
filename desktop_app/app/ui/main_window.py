@@ -27,195 +27,265 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.worker: VideoProcessingWorker = None
         self.setWindowTitle(f"Video Mixer Concat v{APP_VERSION}")
-        self.setMinimumSize(900, 700)
+        self.setMinimumSize(1000, 850)
+        self.resize(1000, 850)  # Set initial size
         
-        # Apply Dark Mode styling
+        # Apply Premium Dark Mode styling
         self.setStyleSheet("""
+            /* Main Window */
             QMainWindow {
-                background-color: #1e1e1e;
-                color: #e0e0e0;
+                background-color: #0d1117;
             }
+            QWidget {
+                background-color: transparent;
+                color: #e6edf3;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }
+            
+            /* Modern Card-Style GroupBox with Pill-shaped Title */
             QGroupBox {
-                font-weight: 600;
-                font-size: 14px;
-                color: #e0e0e0;
-                border: 2px solid #3a3a3a;
-                border-radius: 10px;
-                margin-top: 12px;
-                padding-top: 16px;
-                background-color: #2a2a2a;
+                font-weight: bold;
+                font-size: 13px;
+                color: #ffffff;
+                border: 1px solid #30363d;
+                border-radius: 12px;
+                margin-top: 16px;
+                padding: 20px 16px 16px 16px;
+                background-color: #161b22;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
                 left: 12px;
-                padding: 0 8px;
-                background-color: #2a2a2a;
-                color: #e0e0e0;
+                top: -6px;
+                padding: 6px 16px;
+                background-color: #238636;
+                border-radius: 14px;
+                color: #ffffff;
+                font-size: 12px;
             }
+            
+            /* Labels */
             QLabel {
-                color: #d0d0d0;
-            }
-            QLineEdit {
-                padding: 10px 12px;
-                border: 2px solid #404040;
-                border-radius: 8px;
-                background-color: #252525;
-                color: #e0e0e0;
+                color: #8b949e;
                 font-size: 13px;
-                selection-background-color: #4a5568;
+                background-color: transparent;
+            }
+            
+            /* Input Fields - Transparent Background */
+            QLineEdit {
+                padding: 10px 14px;
+                border: 1px solid #30363d;
+                border-radius: 8px;
+                background-color: transparent;
+                color: #e6edf3;
+                font-size: 13px;
+                selection-background-color: #388bfd;
             }
             QLineEdit:focus {
-                border-color: #6366f1;
-                background-color: #2d2d2d;
+                border: 1px solid #58a6ff;
+            }
+            QLineEdit:hover {
+                border: 1px solid #484f58;
             }
             QLineEdit:disabled {
-                background-color: #1a1a1a;
-                color: #666666;
-                border-color: #2a2a2a;
+                color: #484f58;
+                border: 1px solid #21262d;
             }
+            QLineEdit::placeholder {
+                color: #6e7681;
+            }
+            
+            /* Buttons Base */
             QPushButton {
-                padding: 12px 24px;
-                border-radius: 8px;
-                font-weight: 600;
-                font-size: 14px;
-                border: none;
-                min-width: 120px;
-            }
-            QPushButton#startButton {
-                background-color: #10b981;
-                color: white;
-            }
-            QPushButton#startButton:hover {
-                background-color: #059669;
-            }
-            QPushButton#startButton:pressed {
-                background-color: #047857;
-            }
-            QPushButton#startButton:disabled {
-                background-color: #374151;
-                color: #6b7280;
-            }
-            QPushButton#cancelButton {
-                background-color: #ef4444;
-                color: white;
-            }
-            QPushButton#cancelButton:hover {
-                background-color: #dc2626;
-            }
-            QPushButton#cancelButton:pressed {
-                background-color: #b91c1c;
-            }
-            QPushButton#cancelButton:disabled {
-                background-color: #374151;
-                color: #6b7280;
-            }
-            QPushButton#browseButton {
-                background-color: #6366f1;
-                color: white;
                 padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
                 min-width: 100px;
             }
+            
+            /* Start Button - Green */
+            QPushButton#startButton {
+                background-color: #238636;
+                color: #ffffff;
+            }
+            QPushButton#startButton:hover {
+                background-color: #2ea043;
+            }
+            QPushButton#startButton:pressed {
+                background-color: #196c2e;
+            }
+            QPushButton#startButton:disabled {
+                background-color: #1c3d2a;
+                color: #4d8f5f;
+            }
+            
+            /* Cancel Button - Pink/Magenta */
+            QPushButton#cancelButton {
+                background-color: #6e40c9;
+                color: #ffffff;
+                border: none;
+            }
+            QPushButton#cancelButton:hover {
+                background-color: #8957e5;
+            }
+            QPushButton#cancelButton:pressed {
+                background-color: #553098;
+            }
+            QPushButton#cancelButton:disabled {
+                background-color: #2d2a4a;
+                color: #6e6a99;
+            }
+            
+            /* Browse Button - Purple */
+            QPushButton#browseButton {
+                background-color: #6e40c9;
+                color: #ffffff;
+                padding: 10px 16px;
+                min-width: 90px;
+            }
             QPushButton#browseButton:hover {
-                background-color: #4f46e5;
+                background-color: #8957e5;
             }
             QPushButton#browseButton:pressed {
-                background-color: #4338ca;
+                background-color: #553098;
             }
+            
+            /* Log TextEdit */
             QTextEdit {
-                border: 2px solid #404040;
+                border: 1px solid #30363d;
                 border-radius: 8px;
-                background-color: #1a1a1a;
-                color: #d0d0d0;
-                font-family: 'Consolas', 'Courier New', monospace;
+                background-color: #0d1117;
+                color: #7ee787;
+                font-family: 'Cascadia Code', 'Consolas', monospace;
                 font-size: 12px;
-                padding: 8px;
+                padding: 10px;
+                selection-background-color: #388bfd;
             }
-            QSpinBox, QComboBox {
-                padding: 10px 14px;
-                border: 2px solid #404040;
+            
+            /* Spinbox - Transparent Background */
+            QSpinBox {
+                padding: 8px 12px;
+                border: 1px solid #30363d;
                 border-radius: 8px;
-                background-color: #252525;
-                color: #e0e0e0;
-                min-width: 150px;
+                background-color: transparent;
+                color: #e6edf3;
+                min-width: 120px;
                 font-size: 13px;
-                font-weight: 500;
             }
-            QSpinBox:focus, QComboBox:focus {
-                border-color: #6366f1;
-                background-color: #2d2d2d;
+            QSpinBox:focus {
+                border: 1px solid #58a6ff;
             }
-            QSpinBox:hover, QComboBox:hover {
-                border-color: #525252;
-                background-color: #2a2a2a;
+            QSpinBox:hover {
+                border: 1px solid #484f58;
+            }
+            QSpinBox::up-button, QSpinBox::down-button {
+                background-color: #30363d;
+                border: none;
+                width: 24px;
+                border-radius: 4px;
+                margin: 2px;
+            }
+            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                background-color: #484f58;
+            }
+            QSpinBox::up-arrow {
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-bottom: 5px solid #e6edf3;
+                width: 0;
+                height: 0;
+            }
+            QSpinBox::down-arrow {
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #e6edf3;
+                width: 0;
+                height: 0;
+            }
+            
+            /* Combobox - Transparent Background */
+            QComboBox {
+                padding: 8px 12px;
+                border: 1px solid #30363d;
+                border-radius: 8px;
+                background-color: transparent;
+                color: #e6edf3;
+                min-width: 140px;
+                font-size: 13px;
+            }
+            QComboBox:focus {
+                border: 1px solid #58a6ff;
+            }
+            QComboBox:hover {
+                border: 1px solid #484f58;
             }
             QComboBox::drop-down {
                 border: none;
-                width: 35px;
-                background-color: #3a3a3a;
+                width: 30px;
+                background-color: #30363d;
                 border-top-right-radius: 6px;
                 border-bottom-right-radius: 6px;
-            }
-            QComboBox::drop-down:hover {
-                background-color: #4a4a4a;
             }
             QComboBox::down-arrow {
                 image: none;
                 border-left: 5px solid transparent;
                 border-right: 5px solid transparent;
-                border-top: 6px solid #e0e0e0;
+                border-top: 6px solid #e6edf3;
                 width: 0;
                 height: 0;
-                margin-right: 8px;
             }
             QComboBox QAbstractItemView {
-                background-color: #2a2a2a;
-                border: 2px solid #404040;
+                background-color: #161b22;
+                border: 1px solid #30363d;
                 border-radius: 8px;
-                color: #e0e0e0;
-                selection-background-color: #6366f1;
-                selection-color: white;
+                color: #e6edf3;
+                selection-background-color: #388bfd;
+                selection-color: #ffffff;
                 padding: 4px;
-                min-width: 150px;
+                outline: none;
             }
             QComboBox QAbstractItemView::item {
                 padding: 8px 12px;
                 border-radius: 4px;
+                min-height: 24px;
             }
             QComboBox QAbstractItemView::item:hover {
-                background-color: #3a3a3a;
+                background-color: #21262d;
             }
-            QSpinBox::up-button, QSpinBox::down-button {
-                background-color: #3a3a3a;
-                border: none;
-                border-radius: 6px;
-                width: 25px;
-                margin: 2px;
+            
+            /* Settings GroupBox - Purple Badge */
+            QGroupBox#settingsGroup::title {
+                background-color: #6e40c9;
             }
-            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-                background-color: #4a4a4a;
-            }
-            QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
-                background-color: #525252;
-            }
-            QSpinBox::up-arrow, QSpinBox::down-arrow {
-                width: 0;
-                height: 0;
-                border-left: 5px solid transparent;
-                border-right: 5px solid transparent;
-            }
-            QSpinBox::up-arrow {
-                border-bottom: 6px solid #e0e0e0;
-                margin-bottom: 2px;
-            }
-            QSpinBox::down-arrow {
-                border-top: 6px solid #e0e0e0;
-                margin-top: 2px;
-            }
+            
+            /* License Info Frame */
             QFrame#licenseInfoFrame {
-                background-color: #1e3a5f;
-                border: 2px solid #3b82f6;
+                background-color: #0d1117;
+                border: 1px solid #238636;
                 border-radius: 10px;
-                padding: 12px;
+                padding: 8px;
+            }
+            
+            /* Scrollbar */
+            QScrollBar:vertical {
+                background-color: #0d1117;
+                width: 10px;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #30363d;
+                border-radius: 5px;
+                min-height: 30px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #484f58;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0;
             }
         """)
         
@@ -239,47 +309,75 @@ class MainWindow(QMainWindow):
     def _setup_ui(self):
         """Setup the user interface."""
         central_widget = QWidget()
+        central_widget.setStyleSheet("background-color: #0d1117;")
         self.setCentralWidget(central_widget)
         
         layout = QVBoxLayout()
         layout.setSpacing(16)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(24, 24, 24, 24)
         
         # Header with app title and license info
         header_layout = QHBoxLayout()
-        title_label = QLabel(f"🎬 Video Mixer Concat v{APP_VERSION}")
-        title_font = QFont()
-        title_font.setPointSize(18)
-        title_font.setBold(True)
-        title_label.setFont(title_font)
-        title_label.setStyleSheet("color: #e0e0e0;")
-        header_layout.addWidget(title_label)
+        header_layout.setSpacing(16)
+        
+        # App icon and title container
+        title_container = QHBoxLayout()
+        title_container.setSpacing(14)
+        
+        # Icon label
+        icon_label = QLabel("🎬")
+        icon_label.setStyleSheet("font-size: 36px;")
+        title_container.addWidget(icon_label)
+        
+        # Title and subtitle
+        title_text = QVBoxLayout()
+        title_text.setSpacing(4)
+        
+        title_label = QLabel("Video Mixer Concat")
+        title_label.setStyleSheet("""
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        """)
+        
+        version_label = QLabel(f"v{APP_VERSION}")
+        version_label.setStyleSheet("""
+            font-size: 12px;
+            font-weight: bold;
+            color: #8957e5;
+        """)
+        
+        title_text.addWidget(title_label)
+        title_text.addWidget(version_label)
+        title_container.addLayout(title_text)
+        
+        header_layout.addLayout(title_container)
         header_layout.addStretch()
         
         # License info frame
         self.license_info_frame = QFrame()
         self.license_info_frame.setObjectName("licenseInfoFrame")
+        self.license_info_frame.setMinimumWidth(300)
         license_info_layout = QVBoxLayout()
         license_info_layout.setSpacing(6)
-        license_info_layout.setContentsMargins(12, 12, 12, 12)
+        license_info_layout.setContentsMargins(16, 12, 16, 12)
         
         # Status row
-        status_layout = QHBoxLayout()
-        status_layout.setSpacing(8)
         self.license_status_label = QLabel("🔒 License: Not Activated")
-        self.license_status_label.setStyleSheet("font-weight: 600; color: #60a5fa; font-size: 12px;")
-        status_layout.addWidget(self.license_status_label)
-        status_layout.addStretch()
-        license_info_layout.addLayout(status_layout)
+        self.license_status_label.setStyleSheet("""
+            font-weight: bold;
+            color: #3fb950;
+            font-size: 13px;
+        """)
+        license_info_layout.addWidget(self.license_status_label)
         
         # Expiration row
-        expires_layout = QHBoxLayout()
-        expires_layout.setSpacing(8)
         self.license_expires_label = QLabel("📅 No expiration date")
-        self.license_expires_label.setStyleSheet("color: #93c5fd; font-size: 11px;")
-        expires_layout.addWidget(self.license_expires_label)
-        expires_layout.addStretch()
-        license_info_layout.addLayout(expires_layout)
+        self.license_expires_label.setStyleSheet("""
+            color: #8b949e;
+            font-size: 12px;
+        """)
+        license_info_layout.addWidget(self.license_expires_label)
         
         self.license_info_frame.setLayout(license_info_layout)
         header_layout.addWidget(self.license_info_frame)
@@ -290,61 +388,129 @@ class MainWindow(QMainWindow):
         folder_group = QGroupBox("📁 Folders")
         folder_layout = QFormLayout()
         folder_layout.setSpacing(12)
+        folder_layout.setContentsMargins(16, 20, 16, 16)
+        folder_layout.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        
+        # Input folder
+        input_label = QLabel("Input Folder:")
+        input_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         
         self.input_folder_edit = QLineEdit()
         self.input_folder_edit.setReadOnly(True)
+        self.input_folder_edit.setPlaceholderText("Select folder containing video files...")
         self.input_folder_edit.textChanged.connect(self._on_input_folder_changed)
+        
         input_browse = QPushButton("Browse...")
         input_browse.setObjectName("browseButton")
+        input_browse.setStyleSheet("""
+            QPushButton {
+                background-color: #6e40c9;
+                color: #ffffff;
+                padding: 10px 16px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+                min-width: 90px;
+            }
+            QPushButton:hover {
+                background-color: #8957e5;
+            }
+            QPushButton:pressed {
+                background-color: #553098;
+            }
+        """)
         input_browse.clicked.connect(self._browse_input_folder)
+        
         input_layout = QHBoxLayout()
-        input_layout.setSpacing(8)
-        input_layout.addWidget(self.input_folder_edit)
+        input_layout.setSpacing(10)
+        input_layout.addWidget(self.input_folder_edit, 1)
         input_layout.addWidget(input_browse)
         
-        # Label to show video count
-        self.input_video_count_label = QLabel("(0 videos)")
-        self.input_video_count_label.setStyleSheet("color: #9ca3af; font-style: italic; font-size: 11px;")
-        folder_layout.addRow("Input Folder:", input_layout)
-        folder_layout.addRow("", self.input_video_count_label)  # Empty label for spacing
+        # Video count label
+        self.input_video_count_label = QLabel("🎥 0 videos found")
+        self.input_video_count_label.setStyleSheet("color: #6e7681; font-size: 11px; font-style: italic;")
+        
+        folder_layout.addRow(input_label, input_layout)
+        folder_layout.addRow("", self.input_video_count_label)
+        
+        # Output folder
+        output_label = QLabel("Output Folder:")
+        output_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         
         self.output_folder_edit = QLineEdit()
         self.output_folder_edit.setReadOnly(True)
+        self.output_folder_edit.setPlaceholderText("Select folder for output files...")
+        
         output_browse = QPushButton("Browse...")
         output_browse.setObjectName("browseButton")
+        output_browse.setStyleSheet("""
+            QPushButton {
+                background-color: #6e40c9;
+                color: #ffffff;
+                padding: 10px 16px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+                min-width: 90px;
+            }
+            QPushButton:hover {
+                background-color: #8957e5;
+            }
+            QPushButton:pressed {
+                background-color: #553098;
+            }
+        """)
         output_browse.clicked.connect(self._browse_output_folder)
-        output_layout = QHBoxLayout()
-        output_layout.setSpacing(8)
-        output_layout.addWidget(self.output_folder_edit)
-        output_layout.addWidget(output_browse)
-        folder_layout.addRow("Output Folder:", output_layout)
         
+        output_layout = QHBoxLayout()
+        output_layout.setSpacing(10)
+        output_layout.addWidget(self.output_folder_edit, 1)
+        output_layout.addWidget(output_browse)
+        
+        folder_layout.addRow(output_label, output_layout)
         folder_group.setLayout(folder_layout)
         layout.addWidget(folder_group)
         
-        # Settings
+        # Settings - Use object name for styling
         settings_group = QGroupBox("⚙️ Settings")
+        settings_group.setObjectName("settingsGroup")
         settings_layout = QFormLayout()
-        settings_layout.setSpacing(12)
+        settings_layout.setSpacing(12)  # Match Folders section
+        settings_layout.setContentsMargins(16, 20, 16, 16)  # Match Folders section
+        settings_layout.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
         
+        # Group Size
+        group_size_label = QLabel("Group Size:")
+        group_size_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         self.group_size_spin = QSpinBox()
         self.group_size_spin.setMinimum(2)
         self.group_size_spin.setMaximum(100)
         self.group_size_spin.setValue(2)
-        settings_layout.addRow("Group Size:", self.group_size_spin)
+        settings_layout.addRow(group_size_label, self.group_size_spin)
         
+        # Sort Mode
+        sort_mode_label = QLabel("Sort Mode:")
+        sort_mode_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         self.sort_mode_combo = QComboBox()
         self.sort_mode_combo.addItems(["Filename", "Time", "Random"])
-        settings_layout.addRow("Sort Mode:", self.sort_mode_combo)
+        settings_layout.addRow(sort_mode_label, self.sort_mode_combo)
         
+        # Remainder
+        remainder_label = QLabel("Remainder:")
+        remainder_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         self.remainder_combo = QComboBox()
         self.remainder_combo.addItems(["Ignore", "Export Single", "Warn"])
-        settings_layout.addRow("Remainder Behavior:", self.remainder_combo)
+        settings_layout.addRow(remainder_label, self.remainder_combo)
         
+        # Output Naming
+        naming_label = QLabel("Output Naming:")
+        naming_label.setStyleSheet("color: #c9d1d9; font-weight: bold;")
         self.naming_pattern_edit = QLineEdit()
         self.naming_pattern_edit.setText("group_{group}.mp4")
-        self.naming_pattern_edit.setPlaceholderText("group_{group}.mp4 (use {group} and {count})")
-        settings_layout.addRow("Output Naming:", self.naming_pattern_edit)
+        self.naming_pattern_edit.setPlaceholderText("group_{group}.mp4")
+        settings_layout.addRow(naming_label, self.naming_pattern_edit)
         
         settings_group.setLayout(settings_layout)
         layout.addWidget(settings_group)
@@ -353,25 +519,79 @@ class MainWindow(QMainWindow):
         self.progress_widget = ProgressWidget()
         layout.addWidget(self.progress_widget)
         
-        # Log
-        log_label = QLabel("📋 Processing Log:")
-        log_label.setStyleSheet("font-weight: 600; color: #e0e0e0; font-size: 13px;")
-        layout.addWidget(log_label)
+        # Log section
+        log_header = QHBoxLayout()
+        log_label = QLabel("📋 Processing Log")
+        log_label.setStyleSheet("color: #ffffff; font-weight: bold; font-size: 13px;")
+        log_header.addWidget(log_label)
+        log_header.addStretch()
+        layout.addLayout(log_header)
+        
         self.log_text = QTextEdit()
         self.log_text.setReadOnly(True)
-        self.log_text.setMaximumHeight(150)
+        self.log_text.setMaximumHeight(120)
+        self.log_text.setPlaceholderText("Processing output will appear here...")
         layout.addWidget(self.log_text)
         
         # Buttons
         button_layout = QHBoxLayout()
         button_layout.setSpacing(12)
-        self.start_button = QPushButton("▶ Start Processing")
+        
+        self.start_button = QPushButton("▶  Start Processing")
         self.start_button.setObjectName("startButton")
+        self.start_button.setMinimumHeight(44)
+        self.start_button.setMinimumWidth(160)
+        self.start_button.setStyleSheet("""
+            QPushButton {
+                background-color: #238636;
+                color: #ffffff;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #2ea043;
+            }
+            QPushButton:pressed {
+                background-color: #196c2e;
+            }
+            QPushButton:disabled {
+                background-color: #1c3d2a;
+                color: #4d8f5f;
+            }
+        """)
         self.start_button.clicked.connect(self._start_processing)
-        self.cancel_button = QPushButton("⏹ Cancel")
+        
+        self.cancel_button = QPushButton("⏹  Cancel")
         self.cancel_button.setObjectName("cancelButton")
+        self.cancel_button.setMinimumHeight(44)
+        self.cancel_button.setMinimumWidth(120)
+        self.cancel_button.setStyleSheet("""
+            QPushButton {
+                background-color: #da3633;
+                color: #ffffff;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #f85149;
+            }
+            QPushButton:pressed {
+                background-color: #b62324;
+            }
+            QPushButton:disabled {
+                background-color: #3d1a1a;
+                color: #8b5454;
+            }
+        """)
         self.cancel_button.clicked.connect(self._cancel_processing)
         self.cancel_button.setEnabled(False)
+        
         button_layout.addStretch()
         button_layout.addWidget(self.start_button)
         button_layout.addWidget(self.cancel_button)
@@ -394,7 +614,8 @@ class MainWindow(QMainWindow):
         """Update the video count label."""
         folder_path = self.input_folder_edit.text()
         if not folder_path:
-            self.input_video_count_label.setText("(0 videos)")
+            self.input_video_count_label.setText("🎥 0 videos found")
+            self.input_video_count_label.setStyleSheet("color: #6e7681; font-size: 11px; font-style: italic;")
             return
         
         try:
@@ -404,16 +625,21 @@ class MainWindow(QMainWindow):
                 files = scan_video_files(folder)
                 count = len(files)
                 if count == 0:
-                    self.input_video_count_label.setText("(0 videos)")
+                    self.input_video_count_label.setText("🎥 No videos found")
+                    self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
                 elif count == 1:
-                    self.input_video_count_label.setText("(1 video)")
+                    self.input_video_count_label.setText("🎥 1 video found")
+                    self.input_video_count_label.setStyleSheet("color: #3fb950; font-size: 11px; font-weight: bold;")
                 else:
-                    self.input_video_count_label.setText(f"({count} videos)")
+                    self.input_video_count_label.setText(f"🎥 {count} videos found")
+                    self.input_video_count_label.setStyleSheet("color: #3fb950; font-size: 11px; font-weight: bold;")
             else:
-                self.input_video_count_label.setText("(Invalid folder)")
+                self.input_video_count_label.setText("⚠️ Invalid folder")
+                self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
         except Exception as e:
             logger.error(f"Error scanning video files: {e}")
-            self.input_video_count_label.setText("(Error scanning)")
+            self.input_video_count_label.setText("⚠️ Error scanning")
+            self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
     
     def _browse_output_folder(self):
         """Browse for output folder."""
@@ -427,65 +653,11 @@ class MainWindow(QMainWindow):
         output_folder = self.output_folder_edit.text()
         
         if not input_folder or not Path(input_folder).exists():
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Warning)
-            msg_box.setWindowTitle("Error")
-            msg_box.setText("Please select a valid input folder")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #1e1e1e;
-                    color: #e0e0e0;
-                }
-                QMessageBox QLabel {
-                    color: #e0e0e0;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton {
-                    min-width: 120px;
-                    padding: 12px 24px;
-                    background-color: #6366f1;
-                    color: white;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton:hover {
-                    background-color: #4f46e5;
-                }
-            """)
-            msg_box.exec()
+            self._show_message("Error", "Please select a valid input folder", QMessageBox.Warning)
             return
         
         if not output_folder or not Path(output_folder).exists():
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Warning)
-            msg_box.setWindowTitle("Error")
-            msg_box.setText("Please select a valid output folder")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #1e1e1e;
-                    color: #e0e0e0;
-                }
-                QMessageBox QLabel {
-                    color: #e0e0e0;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton {
-                    min-width: 120px;
-                    padding: 12px 24px;
-                    background-color: #6366f1;
-                    color: white;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton:hover {
-                    background-color: #4f46e5;
-                }
-            """)
-            msg_box.exec()
+            self._show_message("Error", "Please select a valid output folder", QMessageBox.Warning)
             return
         
         # Get settings
@@ -532,12 +704,43 @@ class MainWindow(QMainWindow):
         # Start worker
         self.worker.start()
     
+    def _show_message(self, title: str, text: str, icon=QMessageBox.Information):
+        """Show a styled message box."""
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(icon)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(text)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setStyleSheet("""
+            QMessageBox {
+                background-color: #161b22;
+            }
+            QMessageBox QLabel {
+                color: #e6edf3;
+                font-size: 13px;
+            }
+            QMessageBox QPushButton {
+                min-width: 100px;
+                padding: 8px 20px;
+                background-color: #238636;
+                color: #ffffff;
+                border-radius: 6px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+            }
+            QMessageBox QPushButton:hover {
+                background-color: #2ea043;
+            }
+        """)
+        msg_box.exec()
+    
     def _cancel_processing(self):
         """Cancel video processing."""
         if self.worker and self.worker.isRunning():
             self.worker.cancel()
             self.worker.wait()
-            self._log("Processing cancelled")
+            self._log("⏹ Processing cancelled")
             self.start_button.setEnabled(True)
             self.cancel_button.setEnabled(False)
     
@@ -548,7 +751,7 @@ class MainWindow(QMainWindow):
     def _on_group_complete(self, group_index: int, total: int, success: bool):
         """Handle group completion."""
         progress = int((group_index / total) * 100)
-        self.progress_widget.set_progress(progress, f"Group {group_index}/{total}")
+        self.progress_widget.set_progress(progress, f"Processing group {group_index} of {total}")
     
     def _on_finished(self, success: bool):
         """Handle processing finished."""
@@ -556,70 +759,10 @@ class MainWindow(QMainWindow):
         self.cancel_button.setEnabled(False)
         
         if success:
-            self.progress_widget.set_progress(100, "Processing complete!")
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Information)
-            msg_box.setWindowTitle("Success")
-            msg_box.setText("Video processing completed successfully!")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #1e1e1e;
-                    color: #e0e0e0;
-                }
-                QMessageBox QLabel {
-                    color: #e0e0e0;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton {
-                    min-width: 120px;
-                    padding: 12px 24px;
-                    background-color: #6366f1;
-                    color: white;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton:hover {
-                    background-color: #4f46e5;
-                }
-                QMessageBox QPushButton:pressed {
-                    background-color: #4338ca;
-                }
-            """)
-            msg_box.exec()
+            self.progress_widget.set_progress(100, "✅ Processing complete!")
+            self._show_message("Success", "Video processing completed successfully!")
         else:
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Warning)
-            msg_box.setWindowTitle("Warning")
-            msg_box.setText("Processing completed with errors. Check the log for details.")
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #1e1e1e;
-                    color: #e0e0e0;
-                }
-                QMessageBox QLabel {
-                    color: #e0e0e0;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton {
-                    min-width: 120px;
-                    padding: 12px 24px;
-                    background-color: #ef4444;
-                    color: white;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    font-size: 14px;
-                }
-                QMessageBox QPushButton:hover {
-                    background-color: #dc2626;
-                }
-                QMessageBox QPushButton:pressed {
-                    background-color: #b91c1c;
-                }
-            """)
-            msg_box.exec()
+            self._show_message("Warning", "Processing completed with errors. Check the log.", QMessageBox.Warning)
     
     def _log(self, message: str):
         """Add message to log."""
@@ -632,21 +775,10 @@ class MainWindow(QMainWindow):
         self._update_license_info()
         
         if not is_valid:
-            # Show blocking dialog
-            msg = QMessageBox(self)
-            msg.setIcon(QMessageBox.Critical)
-            msg.setWindowTitle("License Validation Failed")
-            msg.setText("Your license is not valid.")
-            msg.setInformativeText(reason or "Please activate your license.")
-            msg.setStandardButtons(QMessageBox.Ok)
-            
-            # Show activation window
             activation = ActivationWindow(self)
             if activation.exec() == QDialog.Accepted:
-                # Retry validation
                 self._check_license()
             else:
-                # Exit if user cancels
                 self.close()
     
     def _update_license_info(self):
@@ -656,49 +788,68 @@ class MainWindow(QMainWindow):
             is_valid, reason = license_guard.is_license_valid()
             if is_valid:
                 self.license_status_label.setText("✅ License: Active")
-                self.license_status_label.setStyleSheet("font-weight: 600; color: #34d399; font-size: 12px;")
+                self.license_status_label.setStyleSheet("font-weight: bold; color: #3fb950; font-size: 13px;")
+                self.license_info_frame.setStyleSheet("""
+                    QFrame#licenseInfoFrame {
+                        background-color: #0d1117;
+                        border: 1px solid #238636;
+                        border-radius: 10px;
+                        padding: 8px;
+                    }
+                """)
             else:
                 self.license_status_label.setText("⚠️ License: Invalid")
-                self.license_status_label.setStyleSheet("font-weight: 600; color: #f87171; font-size: 12px;")
+                self.license_status_label.setStyleSheet("font-weight: bold; color: #f85149; font-size: 13px;")
+                self.license_info_frame.setStyleSheet("""
+                    QFrame#licenseInfoFrame {
+                        background-color: #0d1117;
+                        border: 1px solid #f85149;
+                        border-radius: 10px;
+                        padding: 8px;
+                    }
+                """)
             
-            # Show expiration date
             expires_at = config_service.get_license_expires_at()
             if expires_at:
                 try:
-                    # Parse expiration date (handle both with and without timezone)
                     exp_str = expires_at.replace("Z", "+00:00")
                     exp_date = datetime.fromisoformat(exp_str)
-                    
-                    # Ensure both datetimes are timezone-aware
                     if exp_date.tzinfo is None:
                         exp_date = exp_date.replace(tzinfo=timezone.utc)
-                    
-                    # Use timezone-aware datetime for comparison
                     now = datetime.now(timezone.utc)
                     days_until = (exp_date - now).days
                     
                     if days_until > 0:
-                        exp_text = f"📅 Expires: {exp_date.strftime('%B %d, %Y')} ({days_until} days remaining)"
-                        self.license_expires_label.setText(exp_text)
+                        self.license_expires_label.setText(
+                            f"📅 Expires: {exp_date.strftime('%B %d, %Y')} ({days_until} days remaining)"
+                        )
                         if days_until <= 30:
-                            self.license_expires_label.setStyleSheet("color: #f87171; font-size: 11px; font-weight: 600;")
+                            self.license_expires_label.setStyleSheet("color: #d29922; font-size: 12px; font-weight: bold;")
                         else:
-                            self.license_expires_label.setStyleSheet("color: #93c5fd; font-size: 11px;")
+                            self.license_expires_label.setStyleSheet("color: #8b949e; font-size: 12px;")
                     else:
                         self.license_expires_label.setText("⚠️ License Expired")
-                        self.license_expires_label.setStyleSheet("color: #f87171; font-size: 11px; font-weight: 600;")
+                        self.license_expires_label.setStyleSheet("color: #f85149; font-size: 12px; font-weight: bold;")
                 except Exception as e:
                     logger.error(f"Error parsing expiration date: {e}")
-                    self.license_expires_label.setText("📅 Expiration date unavailable")
-                    self.license_expires_label.setStyleSheet("color: #9ca3af; font-size: 11px;")
+                    self.license_expires_label.setText("📅 Expiration unavailable")
+                    self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
             else:
                 self.license_expires_label.setText("📅 No expiration date")
-                self.license_expires_label.setStyleSheet("color: #9ca3af; font-size: 11px;")
+                self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
         else:
             self.license_status_label.setText("🔒 License: Not Activated")
-            self.license_status_label.setStyleSheet("font-weight: 600; color: #f87171; font-size: 12px;")
+            self.license_status_label.setStyleSheet("font-weight: bold; color: #f85149; font-size: 13px;")
             self.license_expires_label.setText("📅 Please activate your license")
-            self.license_expires_label.setStyleSheet("color: #9ca3af; font-size: 11px;")
+            self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
+            self.license_info_frame.setStyleSheet("""
+                QFrame#licenseInfoFrame {
+                    background-color: #0d1117;
+                    border: 1px solid #f85149;
+                    border-radius: 10px;
+                    padding: 8px;
+                }
+            """)
     
     def _check_updates(self):
         """Check for app updates."""
