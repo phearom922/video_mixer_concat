@@ -27,33 +27,38 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.worker: VideoProcessingWorker = None
         self.setWindowTitle(f"Video Mixer Concat v{APP_VERSION}")
-        self.setMinimumSize(1000, 920)
-        self.resize(1000, 920)  # Set initial size
+        self.setMinimumSize(1000, 930)
+        self.resize(1000, 930)  # Set initial size
+        
+        # Assets Path
+        assets_path = Path(__file__).parent / "assets"
+        arrow_up = (assets_path / "arrow_up.svg").as_posix()
+        arrow_down = (assets_path / "arrow_down.svg").as_posix()
         
         # Apply Premium Dark Mode styling
-        self.setStyleSheet("""
+        self.setStyleSheet(f"""
             /* Main Window */
-            QMainWindow {
+            QMainWindow {{
                 background-color: #0d1117;
-            }
-            QWidget {
+            }}
+            QWidget {{
                 background-color: transparent;
                 color: #e6edf3;
                 font-family: 'Segoe UI', Arial, sans-serif;
-            }
+            }}
             
             /* Modern Card-Style GroupBox with Pill-shaped Title */
-            QGroupBox {
+            QGroupBox {{
                 font-weight: bold;
                 font-size: 13px;
                 color: #ffffff;
                 border: 1px solid #30363d;
                 border-radius: 12px;
-                margin-top: 16px;
-                padding: 20px 16px 16px 16px;
+                margin-top: 24px;
+                padding: 24px 16px 16px 16px;
                 background-color: #161b22;
-            }
-            QGroupBox::title {
+            }}
+            QGroupBox::title {{
                 subcontrol-origin: margin;
                 subcontrol-position: top left;
                 left: 12px;
@@ -64,17 +69,17 @@ class MainWindow(QMainWindow):
                 color: #ffffff;
                 font-size: 12px;
                 min-height: 20px;
-            }
+            }}
             
             /* Labels */
-            QLabel {
+            QLabel {{
                 color: #8b949e;
                 font-size: 13px;
                 background-color: transparent;
-            }
+            }}
             
             /* Input Fields - Transparent Background */
-            QLineEdit {
+            QLineEdit {{
                 padding: 10px 14px;
                 border: 1px solid #30363d;
                 border-radius: 8px;
@@ -82,80 +87,80 @@ class MainWindow(QMainWindow):
                 color: #e6edf3;
                 font-size: 13px;
                 selection-background-color: #388bfd;
-            }
-            QLineEdit:focus {
+            }}
+            QLineEdit:focus {{
                 border: 1px solid #58a6ff;
-            }
-            QLineEdit:hover {
+            }}
+            QLineEdit:hover {{
                 border: 1px solid #484f58;
-            }
-            QLineEdit:disabled {
+            }}
+            QLineEdit:disabled {{
                 color: #484f58;
                 border: 1px solid #21262d;
-            }
-            QLineEdit::placeholder {
+            }}
+            QLineEdit::placeholder {{
                 color: #6e7681;
-            }
+            }}
             
             /* Buttons Base */
-            QPushButton {
+            QPushButton {{
                 padding: 10px 20px;
                 border-radius: 8px;
                 font-weight: bold;
                 font-size: 13px;
                 border: none;
                 min-width: 100px;
-            }
+            }}
             
             /* Start Button - Green */
-            QPushButton#startButton {
+            QPushButton#startButton {{
                 background-color: #238636;
                 color: #ffffff;
-            }
-            QPushButton#startButton:hover {
+            }}
+            QPushButton#startButton:hover {{
                 background-color: #2ea043;
-            }
-            QPushButton#startButton:pressed {
+            }}
+            QPushButton#startButton:pressed {{
                 background-color: #196c2e;
-            }
-            QPushButton#startButton:disabled {
+            }}
+            QPushButton#startButton:disabled {{
                 background-color: #1c3d2a;
                 color: #4d8f5f;
-            }
+            }}
             
             /* Cancel Button - Pink/Magenta */
-            QPushButton#cancelButton {
+            QPushButton#cancelButton {{
                 background-color: #6e40c9;
                 color: #ffffff;
                 border: none;
-            }
-            QPushButton#cancelButton:hover {
+            }}
+            QPushButton#cancelButton:hover {{
                 background-color: #8957e5;
-            }
-            QPushButton#cancelButton:pressed {
+            }}
+            QPushButton#cancelButton:pressed {{
                 background-color: #553098;
-            }
-            QPushButton#cancelButton:disabled {
+            }}
+            QPushButton#cancelButton:disabled {{
                 background-color: #2d2a4a;
                 color: #6e6a99;
-            }
+            }}
             
             /* Browse Button - Purple */
-            QPushButton#browseButton {
+            QPushButton#browseButton {{
                 background-color: #6e40c9;
                 color: #ffffff;
                 padding: 10px 16px;
                 min-width: 90px;
-            }
-            QPushButton#browseButton:hover {
+            }}
+            QPushButton#browseButton:hover {{
                 background-color: #8957e5;
-            }
-            QPushButton#browseButton:pressed {
+            }}
+            QPushButton#browseButton:pressed {{
                 background-color: #553098;
-            }
+            }}
             
             /* Log TextEdit */
-            QTextEdit {
+            QTextEdit {{
                 border: 1px solid #30363d;
                 border-radius: 8px;
                 background-color: #0d1117;
@@ -164,10 +169,10 @@ class MainWindow(QMainWindow):
                 font-size: 12px;
                 padding: 10px;
                 selection-background-color: #388bfd;
-            }
+            }}
             
             /* Spinbox - Transparent Background */
-            QSpinBox {
+            QSpinBox {{
                 padding: 8px 12px;
                 border: 1px solid #30363d;
                 border-radius: 8px;
@@ -175,42 +180,36 @@ class MainWindow(QMainWindow):
                 color: #e6edf3;
                 min-width: 120px;
                 font-size: 13px;
-            }
-            QSpinBox:focus {
+            }}
+            QSpinBox:focus {{
                 border: 1px solid #58a6ff;
-            }
-            QSpinBox:hover {
+            }}
+            QSpinBox:hover {{
                 border: 1px solid #484f58;
-            }
-            QSpinBox::up-button, QSpinBox::down-button {
-                background-color: #30363d;
+            }}
+            QSpinBox::up-button, QSpinBox::down-button {{
+                background-color: transparent;
                 border: none;
-                width: 24px;
+                width: 20px;
                 border-radius: 4px;
                 margin: 2px;
-            }
-            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-                background-color: #484f58;
-            }
-            QSpinBox::up-arrow {
-                image: none;
-                border-left: 5px solid transparent;
-                border-right: 5px solid transparent;
-                border-bottom: 5px solid #e6edf3;
-                width: 0;
-                height: 0;
-            }
-            QSpinBox::down-arrow {
-                image: none;
-                border-left: 5px solid transparent;
-                border-right: 5px solid transparent;
-                border-top: 5px solid #e6edf3;
-                width: 0;
-                height: 0;
-            }
+            }}
+            QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
+                background-color: #21262d;
+            }}
+            QSpinBox::up-arrow {{
+                image: url({arrow_up});
+                width: 12px;
+                height: 12px;
+            }}
+            QSpinBox::down-arrow {{
+                image: url({arrow_down});
+                width: 12px;
+                height: 12px;
+            }}
             
             /* Combobox - Transparent Background */
-            QComboBox {
+            QComboBox {{
                 padding: 8px 12px;
                 border: 1px solid #30363d;
                 border-radius: 8px;
@@ -218,29 +217,27 @@ class MainWindow(QMainWindow):
                 color: #e6edf3;
                 min-width: 140px;
                 font-size: 13px;
-            }
-            QComboBox:focus {
+            }}
+            QComboBox:focus {{
                 border: 1px solid #58a6ff;
-            }
-            QComboBox:hover {
+            }}
+            QComboBox:hover {{
                 border: 1px solid #484f58;
-            }
-            QComboBox::drop-down {
+            }}
+            QComboBox::drop-down {{
                 border: none;
                 width: 30px;
-                background-color: #30363d;
+                background-color: transparent;
                 border-top-right-radius: 6px;
                 border-bottom-right-radius: 6px;
-            }
-            QComboBox::down-arrow {
-                image: none;
-                border-left: 5px solid transparent;
-                border-right: 5px solid transparent;
-                border-top: 6px solid #e6edf3;
-                width: 0;
-                height: 0;
-            }
-            QComboBox QAbstractItemView {
+            }}
+            QComboBox::down-arrow {{
+                image: url({arrow_down});
+                width: 14px;
+                height: 14px;
+                padding-right: 10px;
+            }}
+            QComboBox QAbstractItemView {{
                 background-color: #161b22;
                 border: 1px solid #30363d;
                 border-radius: 8px;
@@ -249,46 +246,46 @@ class MainWindow(QMainWindow):
                 selection-color: #ffffff;
                 padding: 4px;
                 outline: none;
-            }
-            QComboBox QAbstractItemView::item {
+            }}
+            QComboBox QAbstractItemView::item {{
                 padding: 8px 12px;
                 border-radius: 4px;
                 min-height: 24px;
-            }
-            QComboBox QAbstractItemView::item:hover {
+            }}
+            QComboBox QAbstractItemView::item:hover {{
                 background-color: #21262d;
-            }
+            }}
             
             /* Settings GroupBox - Purple Badge */
-            QGroupBox#settingsGroup::title {
+            QGroupBox#settingsGroup::title {{
                 background-color: #6e40c9;
-            }
+            }}
             
             /* License Info Frame */
-            QFrame#licenseInfoFrame {
+            QFrame#licenseInfoFrame {{
                 background-color: #0d1117;
                 border: 1px solid #238636;
                 border-radius: 10px;
                 padding: 8px;
-            }
+            }}
             
             /* Scrollbar */
-            QScrollBar:vertical {
+            QScrollBar:vertical {{
                 background-color: #0d1117;
                 width: 10px;
                 border-radius: 5px;
-            }
-            QScrollBar::handle:vertical {
+            }}
+            QScrollBar::handle:vertical {{
                 background-color: #30363d;
                 border-radius: 5px;
                 min-height: 30px;
-            }
-            QScrollBar::handle:vertical:hover {
+            }}
+            QScrollBar::handle:vertical:hover {{
                 background-color: #484f58;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
                 height: 0;
-            }
+            }}
         """)
         
         # Setup UI
