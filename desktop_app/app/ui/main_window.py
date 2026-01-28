@@ -27,8 +27,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.worker: VideoProcessingWorker = None
         self.setWindowTitle(f"Video Mixer Concat v{APP_VERSION}")
-        self.setMinimumSize(1000, 850)
-        self.resize(1000, 850)  # Set initial size
+        self.setMinimumSize(1000, 920)
+        self.resize(1000, 920)  # Set initial size
         
         # Apply Premium Dark Mode styling
         self.setStyleSheet("""
