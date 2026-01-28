@@ -55,13 +55,15 @@ class MainWindow(QMainWindow):
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
+                subcontrol-position: top left;
                 left: 12px;
-                top: -6px;
+                top: 2px;
                 padding: 6px 16px;
                 background-color: #238636;
                 border-radius: 14px;
                 color: #ffffff;
                 font-size: 12px;
+                min-height: 20px;
             }
             
             /* Labels */
