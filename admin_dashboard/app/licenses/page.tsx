@@ -117,26 +117,26 @@ export default function LicensesPage() {
             </button>
           </div>
 
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white shadow-lg rounded-xl p-8 mb-6 border border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by license key or customer name..."
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="w-full px-4 py-3 rounded-lg border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="w-full px-4 py-3 rounded-lg border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base"
                 >
-                  <option value="">All</option>
+                  <option value="">All Statuses</option>
                   <option value="active">Active</option>
                   <option value="revoked">Revoked</option>
                   <option value="suspended">Suspended</option>
