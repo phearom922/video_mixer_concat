@@ -1,0 +1,44 @@
+services:
+  license-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: license-server
+    restart: unless-stopped
+    ports:
+      - "8001:8000"  # Use port 8001 to avoid conflict with payment-service (8000)
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - JWT_SIGNING_SECRET=${JWT_SIGNING_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_EXPIRATION_HOURS=${JWT_EXPIRATION_HOURS:-8760}
+      - DEVICE_HASH_SALT=${DEVICE_HASH_SALT:-}
+      - ADMIN_EMAILS=${ADMIN_EMAILS}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - RATE_LIMIT_ACTIVATE_PER_MINUTE=${RATE_LIMIT_ACTIVATE_PER_MINUTE:-5}
+      - RATE_LIMIT_VALIDATE_PER_MINUTE=${RATE_LIMIT_VALIDATE_PER_MINUTE:-60}
+      - GRACE_DAYS=${GRACE_DAYS:-7}
+    env_file:
+      - .env
+    networks:
+      - license-network
+    # Resource limits (important for 1 Core CPU, 2GB RAM)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'      # Use max 50% CPU (leave 50% for payment-service)
+          memory: 512M     # Limit memory to 512MB
+        reservations:
+          cpus: '0.25'     # Reserve 25% CPU
+          memory: 256M     # Reserve 256MB memory
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  license-network:
+    driver: bridge

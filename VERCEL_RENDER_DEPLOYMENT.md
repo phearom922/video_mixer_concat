@@ -35,7 +35,9 @@
    - **Name**: `license-server` (หรือชื่อที่ต้องการ)
    - **Region**: เลือก region ที่ใกล้ที่สุด (เช่น Singapore)
    - **Branch**: `main` (หรือ branch ที่ต้องการ)
-   - **Root Directory**: `license_server` (ถ้า repo มีหลาย folders)
+   - ⚠️ **สำคัญ**: **Root Directory**: `license_server`
+     - ตั้งค่าในส่วน **"Root Directory"** ของ Render
+     - นี้จะบอกให้ Render รู้ว่า code อยู่ที่ไหนใน repo
    - **Runtime**: `Python 3`
    - **Build Command**: 
      ```bash
@@ -92,7 +94,10 @@
 
 3. **ตั้งค่า Build Settings:**
    - **Framework Preset**: Next.js (auto-detected)
-   - **Root Directory**: `admin_dashboard` (ถ้า repo มีหลาย folders)
+   - ⚠️ **สำคัญ**: **Root Directory**: `admin_dashboard`
+     - ไปที่ **"Settings"** → **"General"**
+     - ในส่วน **"Root Directory"** ใส่: `admin_dashboard`
+     - นี้จะบอกให้ Vercel รู้ว่า code อยู่ที่ไหนใน repo
    - **Build Command**: `npm run build` (default)
    - **Output Directory**: `.next` (default)
 

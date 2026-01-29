@@ -72,11 +72,11 @@ export default function LoginPage() {
           {/* Logo/Icon */}
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 transform transition-transform duration-300 hover:scale-105">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </div>
+              <img 
+                src="/icon.png" 
+                alt="Video Mixer Logo" 
+                className="w-20 h-20 rounded-2xl shadow-lg shadow-purple-500/30 transform transition-transform duration-300 hover:scale-105"
+              />
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-slate-900 animate-pulse"></div>
             </div>
           </div>

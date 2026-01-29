@@ -40,7 +40,10 @@
 4. **ตั้งค่า Service:**
    - Railway จะ detect Python อัตโนมัติ
    - ไปที่ **"Settings"** → **"Source"**
-   - ตั้งค่า **Root Directory**: `license_server` (ถ้า repo มีหลาย folders)
+   - ⚠️ **สำคัญ**: ตั้งค่า **Root Directory**: `license_server`
+     - คลิก **"Add Root Directory"** หรือ **"Edit"** ในส่วน Source
+     - ใส่: `license_server`
+     - นี้จะบอกให้ Railway รู้ว่า code อยู่ที่ไหนใน repo
 
 5. **ตั้งค่า Build และ Start Commands:**
    - ไปที่ **"Settings"** → **"Deploy"**
@@ -114,7 +117,10 @@ Railway จะตรวจสอบ health อัตโนมัติ แต่
 
 3. **ตั้งค่า Build Settings:**
    - **Framework Preset**: Next.js (auto-detected)
-   - **Root Directory**: `admin_dashboard` (ถ้า repo มีหลาย folders)
+   - ⚠️ **สำคัญ**: ตั้งค่า **Root Directory**: `admin_dashboard`
+     - ไปที่ **"Settings"** → **"General"**
+     - ในส่วน **"Root Directory"** ใส่: `admin_dashboard`
+     - นี้จะบอกให้ Vercel รู้ว่า code อยู่ที่ไหนใน repo
    - **Build Command**: `npm run build` (default)
    - **Output Directory**: `.next` (default)
 
@@ -207,10 +213,12 @@ def get_api_base_url(self) -> str:
 
 ### ⚠️ ข้อควรระวัง
 
-1. **Railway Free Tier:**
-   - มี $5 credit/month (พอใช้งานได้สำหรับ service เล็กๆ)
-   - ถ้าใช้เกิน credit จะต้อง upgrade
+1. **Railway Free Tier / Trial:**
+   - Railway มี **Trial period** (ปกติ 5-7 วัน หรือ $5 credit)
+   - **เมื่อ trial หมดแล้วต้อง upgrade เป็น Paid plan** ถึงจะ deploy ได้
+   - Paid plan เริ่มต้นที่ **$5/month** (Hobby plan)
    - **ไม่มี sleep** - service ทำงานตลอดเวลา (ดี!)
+   - ถ้าใช้เกิน credit จะต้อง upgrade
 
 2. **CORS Configuration:**
    - ต้องตั้งค่า `CORS_ORIGINS` ใน License Server ให้รวม Vercel URL
@@ -332,17 +340,21 @@ Access to fetch at 'https://license-server-production.up.railway.app/...' from o
 
 ## เปรียบเทียบ Railway vs Render
 
-| Feature | Railway | Render (Free) |
-|---------|---------|---------------|
-| Sleep | ❌ ไม่ sleep | ⚠️ Sleep หลัง idle 15 นาที |
-| Cold Start | ✅ ไม่มี | ⚠️ 30-60 วินาที |
-| Free Tier | ✅ $5 credit/month | ✅ Free (แต่ sleep) |
-| Auto Deploy | ✅ | ✅ |
-| SSL/HTTPS | ✅ | ✅ |
-| Monitoring | ✅ ดี | ✅ ดี |
-| Logs | ✅ ดี | ✅ ดี |
+| Feature | Railway (Paid) | Railway (Trial) | Render (Free) |
+|---------|----------------|-----------------|---------------|
+| Sleep | ❌ ไม่ sleep | ❌ ไม่ sleep | ⚠️ Sleep หลัง idle 15 นาที |
+| Cold Start | ✅ ไม่มี | ✅ ไม่มี | ⚠️ 30-60 วินาที |
+| Cost | 💰 $5/month (Hobby) | ✅ Free (5-7 วัน) | ✅ Free (แต่ sleep) |
+| Trial Period | - | ⚠️ 5-7 วัน หรือ $5 credit | - |
+| Auto Deploy | ✅ | ✅ | ✅ |
+| SSL/HTTPS | ✅ | ✅ | ✅ |
+| Monitoring | ✅ ดี | ✅ ดี | ✅ ดี |
+| Logs | ✅ ดี | ✅ ดี | ✅ ดี |
 
-**สรุป**: Railway เหมาะกับ production มากกว่า Render Free Tier เพราะไม่ sleep
+**สรุป**: 
+- **Railway Paid** เหมาะกับ production มากที่สุด (ไม่ sleep, stable)
+- **Railway Trial** ดีสำหรับทดสอบ แต่ต้อง upgrade หลัง trial หมด
+- **Render Free** ฟรีแต่ sleep (ไม่เหมาะกับ production)
 
 ---
 

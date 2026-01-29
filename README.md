@@ -182,6 +182,10 @@ Executable will be in `dist/VideoMixerConcat.exe`
 - **[VERCEL_RAILWAY_DEPLOYMENT.md](./VERCEL_RAILWAY_DEPLOYMENT.md)** - Deploy ด้วย Vercel + Railway (แนะนำ)
 - **[VERCEL_RENDER_DEPLOYMENT.md](./VERCEL_RENDER_DEPLOYMENT.md)** - Deploy ด้วย Vercel + Render
 - **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - โครงสร้างโปรเจกต์
+- **[ROOT_DIRECTORY_SETUP.md](./ROOT_DIRECTORY_SETUP.md)** - ⚠️ การตั้งค่า Root Directory (สำคัญ!)
+- **[VPS_DEPLOYMENT_GUIDE.md](./VPS_DEPLOYMENT_GUIDE.md)** - Deploy บน VPS (1 Core, 2GB RAM พอใช้งานได้)
+- **[DOCKER_DEPLOYMENT_GUIDE.md](./DOCKER_DEPLOYMENT_GUIDE.md)** - Deploy ด้วย Docker (แนะนำถ้ามี services อื่นรันอยู่แล้ว)
+- **[RAILWAY_PRICING_GUIDE.md](./RAILWAY_PRICING_GUIDE.md)** - Railway pricing และ trial
 - **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - คู่มือการตั้งค่า local development
 - **[QUICK_SETUP.md](./QUICK_SETUP.md)** - Quick start guide
 

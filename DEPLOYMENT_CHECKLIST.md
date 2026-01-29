@@ -87,7 +87,10 @@ git push -u origin main
 1. **Railway:**
    - [ ] สร้าง project บน Railway
    - [ ] Connect GitHub repository
-   - [ ] ตั้งค่า Root Directory: `license_server`
+   - [ ] ⚠️ **สำคัญ**: ตั้งค่า Root Directory: `license_server`
+     - ไปที่ **"Settings"** → **"Source"**
+     - คลิก **"Add Root Directory"** หรือ **"Edit"**
+     - ใส่: `license_server`
    - [ ] ตั้งค่า Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - [ ] ตั้งค่า Environment Variables:
      - [ ] `SUPABASE_URL`
@@ -110,7 +113,9 @@ git push -u origin main
 
 - [ ] สร้าง project บน Vercel
 - [ ] Connect GitHub repository
-- [ ] ตั้งค่า Root Directory: `admin_dashboard`
+- [ ] ⚠️ **สำคัญ**: ตั้งค่า Root Directory: `admin_dashboard`
+  - ไปที่ **"Settings"** → **"General"**
+  - ในส่วน **"Root Directory"** ใส่: `admin_dashboard`
 - [ ] ตั้งค่า Environment Variables:
   - [ ] `NEXT_PUBLIC_SUPABASE_URL`
   - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`

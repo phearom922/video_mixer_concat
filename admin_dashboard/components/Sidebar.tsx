@@ -35,7 +35,12 @@ export default function Sidebar({ userEmail, onSignOut }: SidebarProps) {
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white w-64">
       {/* Logo/Header */}
-      <div className="flex items-center justify-center h-16 px-4 border-b border-gray-800">
+      <div className="flex items-center justify-center gap-3 h-16 px-4 border-b border-gray-800">
+        <img 
+          src="/icon.png" 
+          alt="Video Mixer Logo" 
+          className="w-8 h-8 rounded"
+        />
         <h1 className="text-xl font-bold text-white">Video Mixer Admin</h1>
       </div>
 
