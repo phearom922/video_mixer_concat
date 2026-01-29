@@ -41,7 +41,9 @@ class UpdateService:
             return self._last_check_result
         
         try:
+            logger.info(f"Checking for updates (current version: {APP_VERSION}, force: {force})")
             result = api_client.get_latest_release("windows", APP_VERSION)
+            logger.info(f"Update check result: {result}")
             self._last_check_result = result
             
             # Update last check time
@@ -49,6 +51,7 @@ class UpdateService:
             
             if result.get("update_available"):
                 latest_version = result.get("latest_version")
+                logger.info(f"Update available: {latest_version}")
                 
                 # Check if this version was skipped
                 if latest_version and config_service.is_version_skipped(latest_version):
@@ -56,6 +59,8 @@ class UpdateService:
                     return None
                 
                 return result
+            else:
+                logger.info("No update available")
             
             return None
         except Exception as e:

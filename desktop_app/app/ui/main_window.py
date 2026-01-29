@@ -950,9 +950,15 @@ class MainWindow(QMainWindow):
                 }
             """)
     
-    def _check_updates(self):
+    def _check_updates(self, force: bool = True):
         """Check for app updates."""
-        update_info = update_service.check_for_updates()
-        if update_info:
-            dialog = UpdateDialog(update_info, self)
-            dialog.exec()
+        try:
+            update_info = update_service.check_for_updates(force=force)
+            if update_info:
+                logger.info(f"Update available: {update_info.get('latest_version')}")
+                dialog = UpdateDialog(update_info, self)
+                dialog.exec()
+            else:
+                logger.info("No update available or update check returned None")
+        except Exception as e:
+            logger.error(f"Error checking for updates: {e}")
