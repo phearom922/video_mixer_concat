@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
     QPushButton, QMessageBox, QTextEdit, QFrame, QProgressBar
 )
 from PySide6.QtCore import Qt, QUrl, QTimer, QSize
-from PySide6.QtGui import QDesktopServices, QFont, QPixmap
+from PySide6.QtGui import QDesktopServices, QFont, QPixmap, QIcon
 from datetime import datetime
 from app.services.device_fingerprint import get_device_fingerprint
 from app.services.api_client import api_client
@@ -25,6 +25,19 @@ class ActivationWindow(QDialog):
         self.setMinimumWidth(500)
         self.setMinimumHeight(450)
         self.setModal(True)
+        
+        # Set window icon
+        assets_path = Path(__file__).parent / "assets"
+        icon_path = assets_path / "logo128x128.png"
+        if icon_path.exists():
+            icon = QIcon(str(icon_path))
+            self.setWindowIcon(icon)
+        else:
+            # Fallback: try logo96x96.png
+            fallback_icon_path = assets_path / "logo96x96.png"
+            if fallback_icon_path.exists():
+                icon = QIcon(str(fallback_icon_path))
+                self.setWindowIcon(icon)
         
         # Apply Dark Mode styling
         self.setStyleSheet("""
