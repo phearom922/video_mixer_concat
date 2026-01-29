@@ -41,7 +41,7 @@ async function handleRequest(
     const searchParams = url.searchParams.toString()
     const queryString = searchParams ? `?${searchParams}` : ''
 
-    const targetUrl = `${LICENSE_SERVER_URL}/${path}${queryString}`
+    const targetUrl = `${API_BASE_URL}/${path}${queryString}`
 
     // Get headers from request
     const headers: Record<string, string> = {
