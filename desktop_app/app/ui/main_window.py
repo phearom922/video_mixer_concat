@@ -6,8 +6,9 @@ from PySide6.QtWidgets import (
     QPushButton, QLineEdit, QComboBox, QSpinBox, QTextEdit,
     QFileDialog, QMessageBox, QGroupBox, QFormLayout, QFrame, QDialog
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtGui import QFont, QIcon
+from PySide6.QtGui import QDesktopServices
 from app.ui.activation_window import ActivationWindow
 from app.ui.update_dialog import UpdateDialog
 from app.ui.widgets import ProgressWidget
@@ -475,10 +476,42 @@ class MainWindow(QMainWindow):
         """)
         output_browse.clicked.connect(self._browse_output_folder)
         
+        output_open_folder = QPushButton("Open Folder")
+        output_open_folder.setObjectName("browseButton")
+        output_open_folder.setStyleSheet("""
+            QPushButton {
+                background-color: #6e40c9;
+                color: #ffffff;
+                padding: 10px 16px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                border: none;
+                min-width: 90px;
+            }
+            QPushButton:hover {
+                background-color: #8957e5;
+            }
+            QPushButton:pressed {
+                background-color: #553098;
+            }
+            QPushButton:disabled {
+                background-color: #2d2a4a;
+                color: #6e6a99;
+            }
+        """)
+        output_open_folder.clicked.connect(self._open_output_folder)
+        output_open_folder.setEnabled(False)  # Disabled until folder is selected
+        self.output_open_folder_button = output_open_folder  # Store reference
+        
+        # Enable/disable Open Folder button when output folder changes
+        self.output_folder_edit.textChanged.connect(self._on_output_folder_changed)
+        
         output_layout = QHBoxLayout()
         output_layout.setSpacing(10)
         output_layout.addWidget(self.output_folder_edit, 1)
         output_layout.addWidget(output_browse)
+        output_layout.addWidget(output_open_folder)
         
         folder_layout.addRow(output_label, output_layout)
         folder_group.setLayout(folder_layout)
@@ -657,6 +690,23 @@ class MainWindow(QMainWindow):
         folder = QFileDialog.getExistingDirectory(self, "Select Output Folder")
         if folder:
             self.output_folder_edit.setText(folder)
+    
+    def _open_output_folder(self):
+        """Open output folder in file explorer."""
+        output_folder = self.output_folder_edit.text()
+        if output_folder and Path(output_folder).exists():
+            # Open folder in file explorer
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(Path(output_folder).absolute())))
+        else:
+            self._show_message("Error", "Output folder does not exist", QMessageBox.Warning)
+    
+    def _on_output_folder_changed(self):
+        """Enable/disable Open Folder button based on folder path."""
+        output_folder = self.output_folder_edit.text()
+        if hasattr(self, 'output_open_folder_button'):
+            self.output_open_folder_button.setEnabled(
+                bool(output_folder) and Path(output_folder).exists()
+            )
     
     def _start_processing(self):
         """Start video processing."""
