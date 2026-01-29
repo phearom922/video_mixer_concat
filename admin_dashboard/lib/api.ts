@@ -51,6 +51,13 @@ export interface CreateReleaseData {
   is_latest: boolean
 }
 
+export interface UpdateReleaseData {
+  platform?: string
+  release_notes?: string
+  download_url?: string
+  is_latest?: boolean
+}
+
 async function apiRequest(
   endpoint: string,
   options: RequestInit = {},
@@ -164,6 +171,18 @@ export async function listReleases(
     {},
     token
   )
+  return response.json()
+}
+
+export async function updateRelease(
+  releaseId: string,
+  data: UpdateReleaseData,
+  token: string
+): Promise<Release> {
+  const response = await apiRequest(`/admin/releases/${releaseId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }, token)
   return response.json()
 }
 

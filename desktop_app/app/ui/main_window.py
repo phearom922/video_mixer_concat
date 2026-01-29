@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
                 subcontrol-origin: margin;
                 subcontrol-position: top left;
                 left: 12px;
-                top: 2px;
+                top: 10px;
                 padding: 6px 16px;
                 background-color: #238636;
                 border-radius: 14px;

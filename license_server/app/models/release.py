@@ -14,6 +14,14 @@ class ReleaseCreate(BaseModel):
     is_latest: bool = False
 
 
+class ReleaseUpdate(BaseModel):
+    """Model for updating a release. Version cannot be updated."""
+    platform: Optional[str] = None
+    release_notes: Optional[str] = None
+    download_url: Optional[str] = None
+    is_latest: Optional[bool] = None
+
+
 class ReleaseResponse(BaseModel):
     """Release response model."""
     id: UUID

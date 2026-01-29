@@ -11,12 +11,13 @@ interface ReleaseFormData {
 }
 
 interface ReleaseFormProps {
-  onSubmit: (data: ReleaseFormData) => Promise<void>
+  onSubmit: (data: ReleaseFormData | { platform?: string; release_notes?: string; download_url?: string; is_latest?: boolean }) => Promise<void>
   onCancel: () => void
   initialData?: Partial<ReleaseFormData>
+  isEditMode?: boolean
 }
 
-export default function ReleaseForm({ onSubmit, onCancel, initialData }: ReleaseFormProps) {
+export default function ReleaseForm({ onSubmit, onCancel, initialData, isEditMode = false }: ReleaseFormProps) {
   const [formData, setFormData] = useState<ReleaseFormData>({
     platform: initialData?.platform || 'windows',
     version: initialData?.version || '',
@@ -30,7 +31,18 @@ export default function ReleaseForm({ onSubmit, onCancel, initialData }: Release
     e.preventDefault()
     setLoading(true)
     try {
-      await onSubmit(formData)
+      if (isEditMode) {
+        // In edit mode, only send fields that can be updated (exclude version)
+        const updateData: { platform?: string; release_notes?: string; download_url?: string; is_latest?: boolean } = {}
+        if (formData.platform !== initialData?.platform) updateData.platform = formData.platform
+        if (formData.release_notes !== initialData?.release_notes) updateData.release_notes = formData.release_notes
+        if (formData.download_url !== initialData?.download_url) updateData.download_url = formData.download_url
+        if (formData.is_latest !== initialData?.is_latest) updateData.is_latest = formData.is_latest
+        await onSubmit(updateData)
+      } else {
+        // In create mode, send all fields
+        await onSubmit(formData)
+      }
     } finally {
       setLoading(false)
     }
@@ -55,15 +67,19 @@ export default function ReleaseForm({ onSubmit, onCancel, initialData }: Release
       <div>
         <label htmlFor="version" className="block text-sm font-medium text-gray-700">
           Version (semver, e.g., 1.2.3)
+          {isEditMode && <span className="ml-2 text-xs text-gray-500">(Cannot be changed)</span>}
         </label>
         <input
           type="text"
           id="version"
-          required
+          required={!isEditMode}
+          disabled={isEditMode}
           value={formData.version}
           onChange={(e) => setFormData({ ...formData, version: e.target.value })}
           placeholder="1.0.0"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ${
+            isEditMode ? 'bg-gray-100 cursor-not-allowed' : ''
+          }`}
         />
       </div>
 
@@ -122,7 +138,7 @@ export default function ReleaseForm({ onSubmit, onCancel, initialData }: Release
           disabled={loading}
           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
         >
-          {loading ? 'Saving...' : 'Save'}
+          {loading ? (isEditMode ? 'Updating...' : 'Saving...') : (isEditMode ? 'Update' : 'Save')}
         </button>
       </div>
     </form>

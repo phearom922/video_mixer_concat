@@ -5,7 +5,7 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.models.license import LicenseCreate, LicenseResponse, LicenseUpdate
 from app.models.activation import ActivationInfo
-from app.models.release import ReleaseCreate, ReleaseResponse
+from app.models.release import ReleaseCreate, ReleaseResponse, ReleaseUpdate
 from app.middleware.auth import verify_admin_token
 from app.database import get_supabase_client, insert_via_direct_sql
 from supabase import Client

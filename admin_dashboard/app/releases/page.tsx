@@ -6,9 +6,11 @@ import { useAuth } from '@/lib/auth'
 import {
   listReleases,
   createRelease,
+  updateRelease,
   setLatestRelease,
   Release,
   CreateReleaseData,
+  UpdateReleaseData,
 } from '@/lib/api'
 import ReleaseForm from '@/components/ReleaseForm'
 import Toast from '@/components/Toast'
@@ -22,6 +24,7 @@ export default function ReleasesPage() {
   const [loading, setLoading] = useState(true)
   const [platformFilter, setPlatformFilter] = useState<string>('windows')
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [editingRelease, setEditingRelease] = useState<Release | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [setLatestDialog, setSetLatestDialog] = useState<{ isOpen: boolean; releaseId: string | null }>({
     isOpen: false,
@@ -76,6 +79,31 @@ export default function ReleasesPage() {
       loadReleases()
     } catch (error: any) {
       setToast({ message: error.message || 'Failed to create release', type: 'error' })
+      throw error
+    }
+  }
+
+  const handleUpdate = async (data: UpdateReleaseData | CreateReleaseData) => {
+    if (!editingRelease) return
+    try {
+      const token = await getToken()
+      if (!token) {
+        router.push('/login')
+        return
+      }
+      // Only send fields that are provided (for update)
+      const updateData: UpdateReleaseData = {}
+      if ('platform' in data && data.platform !== undefined) updateData.platform = data.platform
+      if ('release_notes' in data && data.release_notes !== undefined) updateData.release_notes = data.release_notes
+      if ('download_url' in data && data.download_url !== undefined) updateData.download_url = data.download_url
+      if ('is_latest' in data && data.is_latest !== undefined) updateData.is_latest = data.is_latest
+      
+      await updateRelease(editingRelease.id, updateData, token)
+      setEditingRelease(null)
+      setToast({ message: 'Release updated successfully', type: 'success' })
+      loadReleases()
+    } catch (error: any) {
+      setToast({ message: error.message || 'Failed to update release', type: 'error' })
       throw error
     }
   }
@@ -138,6 +166,18 @@ export default function ReleasesPage() {
               <ReleaseForm
                 onSubmit={handleCreate}
                 onCancel={() => setShowCreateForm(false)}
+              />
+            </div>
+          )}
+
+          {editingRelease && (
+            <div className="bg-white shadow rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-medium mb-4">Edit Release {editingRelease.version}</h3>
+              <ReleaseForm
+                onSubmit={handleUpdate}
+                onCancel={() => setEditingRelease(null)}
+                initialData={editingRelease}
+                isEditMode={true}
               />
             </div>
           )}
@@ -207,14 +247,22 @@ export default function ReleasesPage() {
                         {new Date(release.created_at).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        {!release.is_latest && (
+                        <div className="flex space-x-3">
                           <button
-                            onClick={() => setSetLatestDialog({ isOpen: true, releaseId: release.id })}
+                            onClick={() => setEditingRelease(release)}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
-                            Set Latest
+                            Edit
                           </button>
-                        )}
+                          {!release.is_latest && (
+                            <button
+                              onClick={() => setSetLatestDialog({ isOpen: true, releaseId: release.id })}
+                              className="text-indigo-600 hover:text-indigo-900"
+                            >
+                              Set Latest
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
