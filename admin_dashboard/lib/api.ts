@@ -1,4 +1,10 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+// Use proxy in production (Vercel) to avoid mixed content issues
+// In development, use direct API URL
+const isProduction = process.env.NODE_ENV === 'production'
+const DIRECT_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+const API_BASE_URL = isProduction 
+  ? '/api/proxy'  // Use Vercel proxy to avoid mixed content (HTTPS -> HTTP)
+  : DIRECT_API_URL
 
 export interface License {
   id: string

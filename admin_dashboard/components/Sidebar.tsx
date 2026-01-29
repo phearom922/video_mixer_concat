@@ -33,7 +33,7 @@ export default function Sidebar({ userEmail, onSignOut }: SidebarProps) {
   ]
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white w-64">
+    <div className="flex flex-col h-screen bg-gray-900 text-white w-80">
       {/* Logo/Header */}
       <div className="flex items-center justify-center gap-3 h-16 px-4 border-b border-gray-800">
         <img 
