@@ -1,5 +1,6 @@
 """Configuration service for storing app settings."""
 import json
+import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 from app.utils.paths import get_config_file, ensure_directories
@@ -52,8 +53,25 @@ class ConfigService:
         self.set("activation_token", token)
     
     def get_api_base_url(self) -> str:
-        """Get API base URL."""
-        return self.get("api_base_url", "http://localhost:8000")
+        """Get API base URL.
+        
+        Priority:
+        1. Environment variable LICENSE_API_URL (for development/testing)
+        2. Config file value (user-configured)
+        3. Production default: https://api.mixer.camboskill.com
+        """
+        # Check environment variable first (for development)
+        env_url = os.getenv("LICENSE_API_URL")
+        if env_url:
+            return env_url
+        
+        # Check config file
+        config_url = self.get("api_base_url")
+        if config_url:
+            return config_url
+        
+        # Default to production URL
+        return "https://api.mixer.camboskill.com"
     
     def set_api_base_url(self, url: str):
         """Set API base URL."""

@@ -1,6 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
 import os
+import sys
 import logging
+import shutil
 from pathlib import Path
 
 # Setup logging for spec file
@@ -11,9 +13,33 @@ block_cipher = None
 
 # Get the directory where this spec file is located
 spec_dir = Path(SPECPATH)
+dist_dir = spec_dir / 'dist'
+exe_path = dist_dir / 'VideoMixerConcat.exe'
+
+# Try to remove old executable if it exists (to avoid PermissionError)
+if exe_path.exists():
+    try:
+        # Try to remove the file
+        os.chmod(exe_path, 0o777)  # Make it writable
+        exe_path.unlink()
+        logger.info(f"Removed old executable: {exe_path}")
+    except PermissionError:
+        logger.warning(
+            f"Cannot remove {exe_path}. The file may be in use.\n"
+            "Please close VideoMixerConcat.exe if it's running and try again."
+        )
+        # Don't fail, just warn - PyInstaller will try to overwrite it
+    except Exception as e:
+        logger.warning(f"Error removing old executable: {e}")
+
+# Get the directory where this spec file is located
+spec_dir = Path(SPECPATH)
 
 # Assets directory path
 assets_dir = spec_dir / 'app' / 'ui' / 'assets'
+
+# Icon file path
+icon_file = spec_dir / 'icon.ico'
 
 # FFmpeg directory path - check both possible locations
 ffmpeg_dir = spec_dir / 'ffmpeg'
@@ -80,5 +106,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=None,  # Note: PyInstaller requires .ico format. Convert logo128x128.png to .ico if needed.
+    icon=str(icon_file) if icon_file.exists() else None,  # Use icon.ico if it exists
 )

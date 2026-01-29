@@ -14,15 +14,21 @@ from app.utils.ffmpeg_helper import find_ffmpeg
 
 def check_ffmpeg():
     """Check if FFmpeg is available."""
+    # First, check if we have a saved path that still exists
     ffmpeg_path = config_service.get_ffmpeg_path()
-    if not ffmpeg_path:
-        # Try to find FFmpeg (bundled first, then PATH)
-        ffmpeg_path = find_ffmpeg()
-        if ffmpeg_path:
-            config_service.set_ffmpeg_path(ffmpeg_path)
-            return True
-        return False
-    return Path(ffmpeg_path).exists()
+    if ffmpeg_path and Path(ffmpeg_path).exists():
+        return True
+    
+    # Try to find FFmpeg (bundled first, then PATH)
+    ffmpeg_path = find_ffmpeg()
+    if ffmpeg_path:
+        # Save the found path for future use
+        config_service.set_ffmpeg_path(ffmpeg_path)
+        logger.info(f"FFmpeg found and saved: {ffmpeg_path}")
+        return True
+    
+    logger.warning("FFmpeg not found")
+    return False
 
 
 def main():

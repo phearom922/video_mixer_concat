@@ -768,7 +768,24 @@ class MainWindow(QMainWindow):
         remainder_behavior = remainder_map[self.remainder_combo.currentIndex()]
         
         output_pattern = self.naming_pattern_edit.text() or "group_{group}.mp4"
+        
+        # Get FFmpeg path - try config first, then find bundled/system FFmpeg
         ffmpeg_path = config_service.get_ffmpeg_path()
+        if not ffmpeg_path or not Path(ffmpeg_path).exists():
+            # Try to find FFmpeg (bundled first, then PATH)
+            from app.utils.ffmpeg_helper import find_ffmpeg
+            ffmpeg_path = find_ffmpeg()
+            if ffmpeg_path:
+                config_service.set_ffmpeg_path(ffmpeg_path)
+            else:
+                self._show_message(
+                    "FFmpeg Not Found",
+                    "FFmpeg is required to process videos.\n\n"
+                    "Please install FFmpeg or configure the path in settings.\n"
+                    "You can download FFmpeg from https://ffmpeg.org/download.html",
+                    QMessageBox.Warning
+                )
+                return
         
         # Create worker
         self.worker = VideoProcessingWorker(

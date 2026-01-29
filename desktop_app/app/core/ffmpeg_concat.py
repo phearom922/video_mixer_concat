@@ -1,9 +1,16 @@
 """FFmpeg concatenation handling."""
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import List, Optional
 from app.services.logging_service import logger
+
+# Windows-specific: Hide console window for subprocess
+if sys.platform == 'win32':
+    CREATE_NO_WINDOW = 0x08000000
+else:
+    CREATE_NO_WINDOW = 0
 
 
 class FFmpegConcat:
@@ -69,11 +76,20 @@ class FFmpegConcat:
             if progress_callback:
                 progress_callback(f"Starting concat (copy mode): {len(input_files)} files")
             
+            # Hide console window on Windows
+            startupinfo = None
+            if sys.platform == 'win32':
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+            
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=3600  # 1 hour timeout
+                timeout=3600,  # 1 hour timeout
+                creationflags=CREATE_NO_WINDOW if sys.platform == 'win32' else 0,
+                startupinfo=startupinfo
             )
             
             if result.returncode == 0:
@@ -125,11 +141,20 @@ class FFmpegConcat:
             if progress_callback:
                 progress_callback(f"Starting concat (re-encode mode): {len(input_files)} files")
             
+            # Hide console window on Windows
+            startupinfo = None
+            if sys.platform == 'win32':
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+            
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=7200  # 2 hour timeout
+                timeout=7200,  # 2 hour timeout
+                creationflags=CREATE_NO_WINDOW if sys.platform == 'win32' else 0,
+                startupinfo=startupinfo
             )
             
             if result.returncode == 0:

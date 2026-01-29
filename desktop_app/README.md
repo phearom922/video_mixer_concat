@@ -28,7 +28,14 @@ pip install -r requirements.txt
 
 ### 2. Configure API URL
 
-The app needs to know where the license server is running. You can configure this in the app settings or it will use the default: `http://localhost:8000`
+The app needs to know where the license server is running. By default, it uses the production server: `https://api.mixer.camboskill.com`
+
+**For Development:**
+- Set environment variable: `LICENSE_API_URL=http://localhost:8000`
+- Or configure in the app settings/config file
+
+**For Production:**
+- Uses production URL by default (no configuration needed)
 
 ### 3. Install FFmpeg
 

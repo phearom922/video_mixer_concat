@@ -35,11 +35,26 @@ def scan_video_files(directory: Path) -> List[Path]:
     """
     video_extensions = {'.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.m4v', '.webm'}
 
+    # Check if directory exists
+    if not directory.exists():
+        return []
+    
+    if not directory.is_dir():
+        return []
+
     unique_files = set()
-    for entry in directory.iterdir():
-        if entry.is_file():
-            if entry.suffix.lower() in video_extensions:
-                unique_files.add(entry.resolve())
+    try:
+        for entry in directory.iterdir():
+            try:
+                if entry.is_file():
+                    if entry.suffix.lower() in video_extensions:
+                        unique_files.add(entry.resolve())
+            except (PermissionError, OSError):
+                # Skip files that can't be accessed
+                continue
+    except (PermissionError, OSError) as e:
+        # Directory can't be read
+        return []
 
     # แปลงกลับเป็น list และ sort เพื่อให้ลำดับคงที่
     return sorted(unique_files)
