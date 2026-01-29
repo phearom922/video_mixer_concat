@@ -1,10 +1,11 @@
 """License activation window."""
+from pathlib import Path
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QMessageBox, QTextEdit, QFrame, QProgressBar
 )
-from PySide6.QtCore import Qt, QUrl, QTimer
-from PySide6.QtGui import QDesktopServices, QFont
+from PySide6.QtCore import Qt, QUrl, QTimer, QSize
+from PySide6.QtGui import QDesktopServices, QFont, QPixmap
 from datetime import datetime
 from app.services.device_fingerprint import get_device_fingerprint
 from app.services.api_client import api_client
@@ -28,7 +29,7 @@ class ActivationWindow(QDialog):
         # Apply Dark Mode styling
         self.setStyleSheet("""
             QDialog {
-                background-color: #1e1e1e;
+                background-color: #2a2a2a;
                 color: #e0e0e0;
             }
             QLabel {
@@ -36,7 +37,7 @@ class ActivationWindow(QDialog):
             }
             QLineEdit {
                 padding: 10px 12px;
-                border: 2px solid #404040;
+                border: 1px solid #404040;
                 border-radius: 8px;
                 background-color: #252525;
                 color: #e0e0e0;
@@ -84,7 +85,8 @@ class ActivationWindow(QDialog):
                 background-color: #0088cc;
                 color: white;
                 padding: 10px 18px;
-                min-width: 120px;
+                min-width: 140px;
+                border-radius: 8px;
             }
             QPushButton#telegramButton:hover {
                 background-color: #006ba3;
@@ -92,77 +94,113 @@ class ActivationWindow(QDialog):
             QPushButton#telegramButton:pressed {
                 background-color: #005a8a;
             }
-            QFrame#infoFrame {
-                background-color: #1e3a5f;
-                border: 2px solid #3b82f6;
-                border-radius: 10px;
-                padding: 12px;
-            }
         """)
         
         layout = QVBoxLayout()
-        layout.setSpacing(16)
-        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(20)
+        layout.setContentsMargins(32, 32, 32, 32)
         
-        # Title
-        title = QLabel("🔑 License Activation")
+        # Logo section (centered)
+        logo_layout = QVBoxLayout()
+        logo_layout.setAlignment(Qt.AlignCenter)
+        
+        # Load logo (96x96 pixels)
+        assets_path = Path(__file__).parent / "assets"
+        logo_path = assets_path / "logo128x128.png"
+        
+        if logo_path.exists():
+            logo_label = QLabel()
+            pixmap = QPixmap(str(logo_path))
+            # Scale to 96x96 if needed
+            if pixmap.width() != 96 or pixmap.height() != 96:
+                pixmap = pixmap.scaled(96, 96, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            logo_label.setPixmap(pixmap)
+            logo_label.setAlignment(Qt.AlignCenter)
+            logo_layout.addWidget(logo_label)
+        else:
+            # Fallback if logo not found
+            logger.warning(f"Logo not found at {logo_path}")
+        
+        # App name "VIDMIX CONCAT"
+        app_name = QLabel("VIDMIX CONCAT")
+        app_name_font = QFont()
+        app_name_font.setPointSize(18)
+        app_name_font.setBold(True)
+        app_name.setFont(app_name_font)
+        app_name.setStyleSheet("color: #ffffff; margin-top: 8px;")
+        app_name.setAlignment(Qt.AlignCenter)
+        logo_layout.addWidget(app_name)
+        
+        layout.addLayout(logo_layout)
+        layout.addSpacing(8)
+        
+        # Title "Activate Your License" with key icon
+        title_layout = QHBoxLayout()
+        title_layout.setAlignment(Qt.AlignCenter)
+        title_layout.setSpacing(8)
+        
+        title = QLabel("🔑 Activate Your License")
         title_font = QFont()
-        title_font.setPointSize(20)
+        title_font.setPointSize(22)
         title_font.setBold(True)
         title.setFont(title_font)
-        title.setStyleSheet("color: #e0e0e0; margin-bottom: 8px;")
-        layout.addWidget(title)
+        title.setStyleSheet("color: #e0e0e0;")
+        title.setAlignment(Qt.AlignCenter)
+        title_layout.addWidget(title)
+        
+        layout.addLayout(title_layout)
+        layout.addSpacing(4)
         
         # Instructions
         instructions = QLabel(
-            "Enter your license key to activate the application.\n"
-            "An internet connection is required for activation."
+            "Enter your license key to unlock features. Activation requires internet."
         )
         instructions.setWordWrap(True)
-        instructions.setStyleSheet("color: #9ca3af; font-size: 13px; margin-bottom: 4px;")
+        instructions.setAlignment(Qt.AlignCenter)
+        instructions.setStyleSheet("color: #9ca3af; font-size: 13px;")
         layout.addWidget(instructions)
         
-        # Info frame with Telegram link
-        info_frame = QFrame()
-        info_frame.setObjectName("infoFrame")
-        info_layout = QVBoxLayout()
-        info_layout.setSpacing(8)
+        layout.addSpacing(12)
         
-        info_label = QLabel("💬 Need a license key?")
-        info_label.setStyleSheet("font-weight: 600; color: #60a5fa; font-size: 13px;")
-        info_layout.addWidget(info_label)
+        # Telegram Contact Section
+        telegram_frame = QFrame()
+        telegram_frame_layout = QVBoxLayout()
+        telegram_frame_layout.setSpacing(8)
+        telegram_frame_layout.setContentsMargins(0, 0, 0, 0)
         
-        telegram_layout = QHBoxLayout()
-        telegram_text = QLabel("Contact us on Telegram:")
-        telegram_text.setStyleSheet("color: #93c5fd; font-size: 12px;")
-        telegram_layout.addWidget(telegram_text)
+        telegram_label = QLabel("Need a license key? Contact us.")
+        telegram_label.setStyleSheet("color: #9ca3af; font-size: 12px;")
+        telegram_label.setAlignment(Qt.AlignCenter)
+        telegram_frame_layout.addWidget(telegram_label)
         
-        telegram_button = QPushButton("📱 Open Telegram")
+        telegram_button_layout = QHBoxLayout()
+        telegram_button_layout.setAlignment(Qt.AlignCenter)
+        
+        telegram_button = QPushButton("✈️ Open Telegram")
         telegram_button.setObjectName("telegramButton")
         telegram_button.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(TELEGRAM_URL)))
-        telegram_layout.addWidget(telegram_button)
-        telegram_layout.addStretch()
+        telegram_button_layout.addWidget(telegram_button)
         
-        info_layout.addLayout(telegram_layout)
-        info_frame.setLayout(info_layout)
-        layout.addWidget(info_frame)
+        telegram_frame_layout.addLayout(telegram_button_layout)
+        telegram_frame.setLayout(telegram_frame_layout)
+        layout.addWidget(telegram_frame)
         
-        layout.addSpacing(8)
+        layout.addSpacing(16)
         
         # License key input
         license_label = QLabel("License Key:")
         license_label.setStyleSheet("font-weight: 600; color: #d0d0d0; font-size: 13px;")
         layout.addWidget(license_label)
         self.license_input = QLineEdit()
-        self.license_input.setPlaceholderText("Enter your license key here...")
+        self.license_input.setPlaceholderText("Paste key here...")
         layout.addWidget(self.license_input)
         
         # Device label (optional)
-        device_label = QLabel("Device Label (optional):")
+        device_label = QLabel("Device Label (Optional):")
         device_label.setStyleSheet("font-weight: 600; color: #d0d0d0; font-size: 13px;")
         layout.addWidget(device_label)
         self.device_label_input = QLineEdit()
-        self.device_label_input.setPlaceholderText("e.g., Office-PC-1, Home-Laptop")
+        self.device_label_input.setPlaceholderText("e.g., Work-PC")
         layout.addWidget(self.device_label_input)
         
         layout.addStretch()
