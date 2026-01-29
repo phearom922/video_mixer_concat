@@ -1,6 +1,7 @@
 """Reusable UI widgets."""
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar
 from PySide6.QtCore import Qt
+from app.ui.icon_helper import set_icon_to_label, create_icon_label
 
 
 class ProgressWidget(QWidget):
@@ -17,8 +18,7 @@ class ProgressWidget(QWidget):
         header_layout = QHBoxLayout()
         header_layout.setSpacing(8)
         
-        self.status_icon = QLabel("⏳")
-        self.status_icon.setStyleSheet("font-size: 14px; background: transparent;")
+        self.status_icon = create_icon_label("hourglass", 14)
         header_layout.addWidget(self.status_icon)
         
         self.label = QLabel("Ready to process")
@@ -75,7 +75,7 @@ class ProgressWidget(QWidget):
         
         # Update styling based on progress
         if value == 0:
-            self.status_icon.setText("⏳")
+            set_icon_to_label(self.status_icon, "hourglass", 14)
             self.percent_label.setStyleSheet("color: #8957e5; font-size: 13px; font-weight: bold; background: transparent;")
             self.progress_bar.setStyleSheet("""
                 QProgressBar {
@@ -89,7 +89,7 @@ class ProgressWidget(QWidget):
                 }
             """)
         elif value < 100:
-            self.status_icon.setText("⚡")
+            set_icon_to_label(self.status_icon, "lightning", 14)
             self.percent_label.setStyleSheet("color: #58a6ff; font-size: 13px; font-weight: bold; background: transparent;")
             self.progress_bar.setStyleSheet("""
                 QProgressBar {
@@ -103,7 +103,7 @@ class ProgressWidget(QWidget):
                 }
             """)
         else:
-            self.status_icon.setText("✅")
+            set_icon_to_label(self.status_icon, "check", 14)
             self.percent_label.setStyleSheet("color: #3fb950; font-size: 13px; font-weight: bold; background: transparent;")
             self.progress_bar.setStyleSheet("""
                 QProgressBar {
@@ -122,7 +122,7 @@ class ProgressWidget(QWidget):
         self.progress_bar.setValue(0)
         self.percent_label.setText("0%")
         self.label.setText("Ready to process")
-        self.status_icon.setText("⏳")
+        set_icon_to_label(self.status_icon, "hourglass", 14)
         self.percent_label.setStyleSheet("color: #8957e5; font-size: 13px; font-weight: bold; background: transparent;")
         self.progress_bar.setStyleSheet("""
             QProgressBar {

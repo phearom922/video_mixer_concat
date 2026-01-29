@@ -6,6 +6,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QUrl, QTimer, QSize
 from PySide6.QtGui import QDesktopServices, QFont, QPixmap, QIcon
+from pathlib import Path
+from app.ui.icon_helper import set_icon_to_label, create_icon_label
 from datetime import datetime
 from app.services.device_fingerprint import get_device_fingerprint
 from app.services.api_client import api_client
@@ -152,13 +154,15 @@ class ActivationWindow(QDialog):
         title_layout.setAlignment(Qt.AlignCenter)
         title_layout.setSpacing(8)
         
-        title = QLabel("🔑 Activate Your License")
+        title_icon = create_icon_label("key", 20)
+        title = QLabel("Activate Your License")
         title_font = QFont()
         title_font.setPointSize(22)
         title_font.setBold(True)
         title.setFont(title_font)
         title.setStyleSheet("color: #e0e0e0;")
         title.setAlignment(Qt.AlignCenter)
+        title_layout.addWidget(title_icon)
         title_layout.addWidget(title)
         
         layout.addLayout(title_layout)
@@ -189,8 +193,14 @@ class ActivationWindow(QDialog):
         telegram_button_layout = QHBoxLayout()
         telegram_button_layout.setAlignment(Qt.AlignCenter)
         
-        telegram_button = QPushButton("✈️ Open Telegram")
+        # Create button with icon using QIcon
+        telegram_icon_path = Path(__file__).parent / "assets" / "icon_airplane.svg"
+        telegram_button = QPushButton("Open Telegram")
         telegram_button.setObjectName("telegramButton")
+        if telegram_icon_path.exists():
+            telegram_icon = QIcon(str(telegram_icon_path))
+            telegram_button.setIcon(telegram_icon)
+            telegram_button.setIconSize(QSize(16, 16))
         telegram_button.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(TELEGRAM_URL)))
         telegram_button_layout.addWidget(telegram_button)
         
@@ -305,18 +315,18 @@ class ActivationWindow(QDialog):
             self.device_label_input.setEnabled(True)
             
             # Prepare success message
-            message = "✅ Your license has been activated successfully!\n\n"
+            message = "Your license has been activated successfully!\n\n"
             
             if expires_at:
                 try:
                     exp_date = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
-                    message += f"📅 License expires: {exp_date.strftime('%B %d, %Y')}\n"
+                    message += f"License expires: {exp_date.strftime('%B %d, %Y')}\n"
                 except:
                     pass
             
             customer_name = license_info.get("customer_name")
             if customer_name:
-                message += f"👤 Customer: {customer_name}\n"
+                message += f"Customer: {customer_name}\n"
             
             # Create custom message box with centered OK button
             msg_box = QMessageBox(self)
@@ -361,13 +371,13 @@ class ActivationWindow(QDialog):
             
             error_msg = str(e)
             if "not found" in error_msg.lower():
-                error_msg += f"\n\n💡 Need a license? Contact us on Telegram:\n{TELEGRAM_URL}"
+                error_msg += f"\n\nNeed a license? Contact us on Telegram:\n{TELEGRAM_URL}"
             
             # Create custom message box with centered OK button
             msg_box = QMessageBox(self)
             msg_box.setIcon(QMessageBox.Critical)
             msg_box.setWindowTitle("Activation Failed")
-            msg_box.setText(f"❌ Failed to activate license:\n\n{error_msg}")
+            msg_box.setText(f"Failed to activate license:\n\n{error_msg}")
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.setStyleSheet("""
                 QMessageBox {

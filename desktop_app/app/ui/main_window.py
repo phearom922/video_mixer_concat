@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtGui import QDesktopServices
+from app.ui.icon_helper import set_icon_to_label, create_icon_label
 from app.ui.activation_window import ActivationWindow
 from app.ui.update_dialog import UpdateDialog
 from app.ui.widgets import ProgressWidget
@@ -374,22 +375,36 @@ class MainWindow(QMainWindow):
         license_info_layout.setSpacing(6)
         license_info_layout.setContentsMargins(16, 12, 16, 12)
         
-        # Status row
-        self.license_status_label = QLabel("🔒 License: Not Activated")
+        # Status row with icon
+        status_row = QHBoxLayout()
+        status_row.setSpacing(6)
+        status_row.setContentsMargins(0, 0, 0, 0)
+        self.license_status_icon = create_icon_label("key", 16)
+        self.license_status_label = QLabel("License: Not Activated")
         self.license_status_label.setStyleSheet("""
             font-weight: bold;
             color: #3fb950;
             font-size: 13px;
         """)
-        license_info_layout.addWidget(self.license_status_label)
+        status_row.addWidget(self.license_status_icon)
+        status_row.addWidget(self.license_status_label)
+        status_row.addStretch()
+        license_info_layout.addLayout(status_row)
         
-        # Expiration row
-        self.license_expires_label = QLabel("📅 No expiration date")
+        # Expiration row with icon
+        expires_row = QHBoxLayout()
+        expires_row.setSpacing(6)
+        expires_row.setContentsMargins(0, 0, 0, 0)
+        self.license_expires_icon = create_icon_label("calendar", 14)
+        self.license_expires_label = QLabel("No expiration date")
         self.license_expires_label.setStyleSheet("""
             color: #8b949e;
             font-size: 12px;
         """)
-        license_info_layout.addWidget(self.license_expires_label)
+        expires_row.addWidget(self.license_expires_icon)
+        expires_row.addWidget(self.license_expires_label)
+        expires_row.addStretch()
+        license_info_layout.addLayout(expires_row)
         
         self.license_info_frame.setLayout(license_info_layout)
         header_layout.addWidget(self.license_info_frame)
@@ -397,7 +412,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(header_layout)
         
         # Input/Output folders
-        folder_group = QGroupBox("📁 Folders")
+        folder_group = QGroupBox("Folders")
         folder_layout = QFormLayout()
         folder_layout.setSpacing(12)
         folder_layout.setContentsMargins(16, 20, 16, 16)
@@ -439,12 +454,21 @@ class MainWindow(QMainWindow):
         input_layout.addWidget(self.input_folder_edit, 1)
         input_layout.addWidget(input_browse)
         
-        # Video count label
-        self.input_video_count_label = QLabel("🎥 0 videos found")
+        # Video count label with icon
+        video_count_row = QHBoxLayout()
+        video_count_row.setSpacing(6)
+        video_count_row.setContentsMargins(0, 0, 0, 0)
+        self.input_video_count_icon = create_icon_label("video", 12)
+        self.input_video_count_label = QLabel("0 videos found")
         self.input_video_count_label.setStyleSheet("color: #6e7681; font-size: 11px; font-style: italic;")
+        video_count_row.addWidget(self.input_video_count_icon)
+        video_count_row.addWidget(self.input_video_count_label)
+        video_count_row.addStretch()
+        video_count_widget = QWidget()
+        video_count_widget.setLayout(video_count_row)
         
         folder_layout.addRow(input_label, input_layout)
-        folder_layout.addRow("", self.input_video_count_label)
+        folder_layout.addRow("", video_count_widget)
         
         # Output folder
         output_label = QLabel("Output Folder:")
@@ -518,7 +542,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(folder_group)
         
         # Settings - Use object name for styling
-        settings_group = QGroupBox("⚙️ Settings")
+        settings_group = QGroupBox("Settings")
         settings_group.setObjectName("settingsGroup")
         settings_layout = QFormLayout()
         settings_layout.setSpacing(12)  # Match Folders section
@@ -658,7 +682,8 @@ class MainWindow(QMainWindow):
         """Update the video count label."""
         folder_path = self.input_folder_edit.text()
         if not folder_path:
-            self.input_video_count_label.setText("🎥 0 videos found")
+            set_icon_to_label(self.input_video_count_icon, "video", 12)
+            self.input_video_count_label.setText("0 videos found")
             self.input_video_count_label.setStyleSheet("color: #6e7681; font-size: 11px; font-style: italic;")
             return
         
@@ -669,20 +694,25 @@ class MainWindow(QMainWindow):
                 files = scan_video_files(folder)
                 count = len(files)
                 if count == 0:
-                    self.input_video_count_label.setText("🎥 No videos found")
+                    set_icon_to_label(self.input_video_count_icon, "video", 12)
+                    self.input_video_count_label.setText("No videos found")
                     self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
                 elif count == 1:
-                    self.input_video_count_label.setText("🎥 1 video found")
+                    set_icon_to_label(self.input_video_count_icon, "video", 12)
+                    self.input_video_count_label.setText("1 video found")
                     self.input_video_count_label.setStyleSheet("color: #3fb950; font-size: 11px; font-weight: bold;")
                 else:
-                    self.input_video_count_label.setText(f"🎥 {count} videos found")
+                    set_icon_to_label(self.input_video_count_icon, "video", 12)
+                    self.input_video_count_label.setText(f"{count} videos found")
                     self.input_video_count_label.setStyleSheet("color: #3fb950; font-size: 11px; font-weight: bold;")
             else:
-                self.input_video_count_label.setText("⚠️ Invalid folder")
+                set_icon_to_label(self.input_video_count_icon, "warning", 12)
+                self.input_video_count_label.setText("Invalid folder")
                 self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
         except Exception as e:
             logger.error(f"Error scanning video files: {e}")
-            self.input_video_count_label.setText("⚠️ Error scanning")
+            set_icon_to_label(self.input_video_count_icon, "warning", 12)
+            self.input_video_count_label.setText("Error scanning")
             self.input_video_count_label.setStyleSheet("color: #f85149; font-size: 11px;")
     
     def _browse_output_folder(self):
@@ -820,7 +850,7 @@ class MainWindow(QMainWindow):
         self.cancel_button.setEnabled(False)
         
         if success:
-            self.progress_widget.set_progress(100, "✅ Processing complete!")
+            self.progress_widget.set_progress(100, "Processing complete!")
             self._show_message("Success", "Video processing completed successfully!")
         else:
             self._show_message("Warning", "Processing completed with errors. Check the log.", QMessageBox.Warning)
@@ -848,7 +878,8 @@ class MainWindow(QMainWindow):
         if token:
             is_valid, reason = license_guard.is_license_valid()
             if is_valid:
-                self.license_status_label.setText("✅ License: Active")
+                set_icon_to_label(self.license_status_icon, "check", 16)
+                self.license_status_label.setText("License: Active")
                 self.license_status_label.setStyleSheet("font-weight: bold; color: #3fb950; font-size: 13px;")
                 self.license_info_frame.setStyleSheet("""
                     QFrame#licenseInfoFrame {
@@ -859,7 +890,8 @@ class MainWindow(QMainWindow):
                     }
                 """)
             else:
-                self.license_status_label.setText("⚠️ License: Invalid")
+                set_icon_to_label(self.license_status_icon, "warning", 16)
+                self.license_status_label.setText("License: Invalid")
                 self.license_status_label.setStyleSheet("font-weight: bold; color: #f85149; font-size: 13px;")
                 self.license_info_frame.setStyleSheet("""
                     QFrame#licenseInfoFrame {
@@ -881,27 +913,33 @@ class MainWindow(QMainWindow):
                     days_until = (exp_date - now).days
                     
                     if days_until > 0:
+                        set_icon_to_label(self.license_expires_icon, "calendar", 14)
                         self.license_expires_label.setText(
-                            f"📅 Expires: {exp_date.strftime('%B %d, %Y')} ({days_until} days remaining)"
+                            f"Expires: {exp_date.strftime('%B %d, %Y')} ({days_until} days remaining)"
                         )
                         if days_until <= 30:
                             self.license_expires_label.setStyleSheet("color: #d29922; font-size: 12px; font-weight: bold;")
                         else:
                             self.license_expires_label.setStyleSheet("color: #8b949e; font-size: 12px;")
                     else:
-                        self.license_expires_label.setText("⚠️ License Expired")
+                        set_icon_to_label(self.license_expires_icon, "warning", 14)
+                        self.license_expires_label.setText("License Expired")
                         self.license_expires_label.setStyleSheet("color: #f85149; font-size: 12px; font-weight: bold;")
                 except Exception as e:
                     logger.error(f"Error parsing expiration date: {e}")
-                    self.license_expires_label.setText("📅 Expiration unavailable")
+                    set_icon_to_label(self.license_expires_icon, "calendar", 14)
+                    self.license_expires_label.setText("Expiration unavailable")
                     self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
             else:
-                self.license_expires_label.setText("📅 No expiration date")
+                set_icon_to_label(self.license_expires_icon, "calendar", 14)
+                self.license_expires_label.setText("No expiration date")
                 self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
         else:
-            self.license_status_label.setText("🔒 License: Not Activated")
+            set_icon_to_label(self.license_status_icon, "key", 16)
+            self.license_status_label.setText("License: Not Activated")
             self.license_status_label.setStyleSheet("font-weight: bold; color: #f85149; font-size: 13px;")
-            self.license_expires_label.setText("📅 Please activate your license")
+            set_icon_to_label(self.license_expires_icon, "calendar", 14)
+            self.license_expires_label.setText("Please activate your license")
             self.license_expires_label.setStyleSheet("color: #6e7681; font-size: 12px;")
             self.license_info_frame.setStyleSheet("""
                 QFrame#licenseInfoFrame {
