@@ -12,6 +12,14 @@ import {
   CreateReleaseData,
   UpdateReleaseData,
 } from '@/lib/api'
+
+interface ReleaseFormData {
+  platform: string
+  version: string
+  release_notes: string
+  download_url: string
+  is_latest: boolean
+}
 import ReleaseForm from '@/components/ReleaseForm'
 import Toast from '@/components/Toast'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -66,17 +74,29 @@ export default function ReleasesPage() {
     loadReleases()
   }, [isAuthenticated, platformFilter])
 
-  const handleCreate = async (data: CreateReleaseData) => {
+  const handleCreate = async (data: ReleaseFormData | { platform?: string; release_notes?: string; download_url?: string; is_latest?: boolean }) => {
     try {
       const token = await getToken()
       if (!token) {
         router.push('/login')
         return
       }
-      await createRelease(data, token)
-      setShowCreateForm(false)
-      setToast({ message: 'Release created successfully', type: 'success' })
-      loadReleases()
+      // Type guard: ensure we have all required fields for create
+      if ('version' in data && data.version) {
+        const createData: CreateReleaseData = {
+          platform: data.platform,
+          version: data.version,
+          release_notes: data.release_notes,
+          download_url: data.download_url,
+          is_latest: data.is_latest,
+        }
+        await createRelease(createData, token)
+        setShowCreateForm(false)
+        setToast({ message: 'Release created successfully', type: 'success' })
+        loadReleases()
+      } else {
+        throw new Error('Version is required for creating a release')
+      }
     } catch (error: any) {
       setToast({ message: error.message || 'Failed to create release', type: 'error' })
       throw error
