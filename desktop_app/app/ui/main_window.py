@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QFileDialog, QMessageBox, QGroupBox, QFormLayout, QFrame, QDialog
 )
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 from app.ui.activation_window import ActivationWindow
 from app.ui.update_dialog import UpdateDialog
 from app.ui.widgets import ProgressWidget
@@ -34,6 +34,18 @@ class MainWindow(QMainWindow):
         assets_path = Path(__file__).parent / "assets"
         arrow_up = (assets_path / "arrow_up.svg").as_posix()
         arrow_down = (assets_path / "arrow_down.svg").as_posix()
+        
+        # Set window icon
+        icon_path = assets_path / "logo128x128.png"
+        if icon_path.exists():
+            icon = QIcon(str(icon_path))
+            self.setWindowIcon(icon)
+        else:
+            # Fallback: try logo96x96.png
+            fallback_icon_path = assets_path / "logo96x96.png"
+            if fallback_icon_path.exists():
+                icon = QIcon(str(fallback_icon_path))
+                self.setWindowIcon(icon)
         
         # Apply Premium Dark Mode styling
         self.setStyleSheet(f"""
