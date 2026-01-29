@@ -1,6 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 import os
+import logging
 from pathlib import Path
+
+# Setup logging for spec file
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 block_cipher = None
 
@@ -10,12 +15,32 @@ spec_dir = Path(SPECPATH)
 # Assets directory path
 assets_dir = spec_dir / 'app' / 'ui' / 'assets'
 
+# FFmpeg directory path - check both possible locations
+ffmpeg_dir = spec_dir / 'ffmpeg'
+ffmpeg_dir_alt = spec_dir / 'app' / 'ffmpeg'  # Alternative location
+
 # Collect all assets files
 datas = []
 if assets_dir.exists():
     # Include all files in assets directory
     # PyInstaller datas format: (source_path, destination_path_in_exe)
     datas.append((str(assets_dir), 'app/ui/assets'))
+
+# Include FFmpeg if it exists (check both locations)
+ffmpeg_found = False
+if ffmpeg_dir.exists() and (ffmpeg_dir / 'bin' / 'ffmpeg.exe').exists():
+    # Include FFmpeg binaries from desktop_app/ffmpeg/
+    datas.append((str(ffmpeg_dir), 'ffmpeg'))
+    logger.info(f"Including FFmpeg from: {ffmpeg_dir}")
+    ffmpeg_found = True
+elif ffmpeg_dir_alt.exists() and (ffmpeg_dir_alt / 'bin' / 'ffmpeg.exe').exists():
+    # Include FFmpeg binaries from desktop_app/app/ffmpeg/
+    datas.append((str(ffmpeg_dir_alt), 'ffmpeg'))
+    logger.info(f"Including FFmpeg from: {ffmpeg_dir_alt}")
+    ffmpeg_found = True
+
+if not ffmpeg_found:
+    logger.warning(f"FFmpeg not found at {ffmpeg_dir} or {ffmpeg_dir_alt}. FFmpeg will not be bundled.")
 
 a = Analysis(
     ['app/main.py'],

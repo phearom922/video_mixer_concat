@@ -174,6 +174,17 @@ pyinstaller pyinstaller.spec
 
 Executable will be in `dist/VideoMixerConcat.exe`
 
+## 📚 Documentation
+
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - คู่มือการ deploy License Server
+- **[DISTRIBUTION_GUIDE.md](./DISTRIBUTION_GUIDE.md)** - คู่มือการส่งไฟล์ Desktop App ให้ลูกค้า
+- **[UPDATE_VERSION_GUIDE.md](./UPDATE_VERSION_GUIDE.md)** - คู่มือการอัพเดทเวอร์ชั่น
+- **[VERCEL_RAILWAY_DEPLOYMENT.md](./VERCEL_RAILWAY_DEPLOYMENT.md)** - Deploy ด้วย Vercel + Railway (แนะนำ)
+- **[VERCEL_RENDER_DEPLOYMENT.md](./VERCEL_RENDER_DEPLOYMENT.md)** - Deploy ด้วย Vercel + Render
+- **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - โครงสร้างโปรเจกต์
+- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - คู่มือการตั้งค่า local development
+- **[QUICK_SETUP.md](./QUICK_SETUP.md)** - Quick start guide
+
 ## Project Structure
 
 ```

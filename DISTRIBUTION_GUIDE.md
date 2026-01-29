@@ -2,6 +2,17 @@
 
 เอกสารนี้อธิบายกระบวนการส่งไฟล์แอปพลิเคชันให้ลูกค้าตั้งแต่การ build, package, upload จนถึงการติดตั้งและใช้งาน
 
+> **ℹ️ หมายเหตุ**: 
+> - Desktop App ต้องการ **FFmpeg** เพื่อทำงานกับวิดีโอ
+>   - **ถ้า bundle FFmpeg**: ลูกค้าไม่ต้องติดตั้ง FFmpeg แยก (พร้อมใช้งานทันที)
+>   - **ถ้าไม่ bundle FFmpeg**: ลูกค้าต้องติดตั้ง FFmpeg แยก (ดูขั้นตอนที่ 4 ในส่วน User)
+> - Desktop App ต้องการ **License Server** เพื่อ activate license
+>   - **License Server ต้อง deploy บน server ที่เข้าถึงได้จาก internet**
+>   - ดูรายละเอียดที่ `DEPLOYMENT_GUIDE.md`
+> - Desktop App ต้องการ **License Server** เพื่อ activate license
+>   - **License Server ต้อง deploy บน server ที่เข้าถึงได้จาก internet**
+>   - ดูรายละเอียดที่ `DEPLOYMENT_GUIDE.md`
+
 ## ส่วนที่ 1: สำหรับ Admin
 
 ### ขั้นตอนที่ 1: เตรียม Build Desktop App
@@ -54,7 +65,39 @@
    - ฟีเจอร์หลักทำงานได้
 3. ถ้ามีปัญหา ให้แก้ไขและ build ใหม่
 
-#### 1.4 ตั้งชื่อไฟล์ตามเวอร์ชั่น (แนะนำ)
+#### 1.4 Bundle FFmpeg (แนะนำ - เพื่อความสะดวกของลูกค้า)
+
+**ถ้าต้องการให้ลูกค้าไม่ต้องติดตั้ง FFmpeg แยก:**
+
+1. ดาวน์โหลด FFmpeg:
+   - ไปที่ https://www.gyan.dev/ffmpeg/builds/
+   - ดาวน์โหลด **"ffmpeg-release-essentials.zip"**
+
+2. Extract และวาง FFmpeg:
+   - Extract ไฟล์ zip
+   - สร้างโฟลเดอร์ `desktop_app/ffmpeg/` (ถ้ายังไม่มี)
+   - Copy โฟลเดอร์ `bin` จาก FFmpeg ที่ extract มา ไปไว้ใน `desktop_app/ffmpeg/bin/`
+   - โครงสร้างควรเป็น:
+     ```
+     desktop_app/
+     ├── ffmpeg/
+     │   └── bin/
+     │       ├── ffmpeg.exe
+     │       └── ... (ไฟล์อื่นๆ)
+     ├── app/
+     └── pyinstaller.spec
+     ```
+
+3. Build executable:
+   - เมื่อ build ด้วย PyInstaller, FFmpeg จะถูก bundle เข้าไปอัตโนมัติ
+   - ตรวจสอบ log ว่าแสดง "Including FFmpeg from: ..."
+
+> **หมายเหตุ**: ดูรายละเอียดเพิ่มเติมที่ `desktop_app/FFMPEG_SETUP.md`
+
+**ถ้าไม่ bundle FFmpeg:**
+- ลูกค้าจะต้องติดตั้ง FFmpeg แยก (ดูขั้นตอนที่ 4 ในส่วน User)
+
+#### 1.5 ตั้งชื่อไฟล์ตามเวอร์ชั่น (แนะนำ)
 
 1. เปลี่ยนชื่อไฟล์เป็น `VideoMixerConcat-v2.0.0.exe` (หรือชื่อที่เหมาะสม)
 2. เก็บไฟล์ไว้ในโฟลเดอร์ที่เข้าถึงได้ง่าย
@@ -173,6 +216,8 @@
 
 ## ส่วนที่ 2: สำหรับ User (ลูกค้า)
 
+> **ℹ️ หมายเหตุ**: ถ้า Admin bundle FFmpeg เข้าไปใน executable แล้ว คุณไม่ต้องติดตั้ง FFmpeg แยก สามารถข้ามขั้นตอนที่ 4 ได้
+
 ### ขั้นตอนที่ 1: รับการแจ้งเตือนอัพเดท
 
 #### 1.1 การแจ้งเตือนอัตโนมัติ
@@ -231,20 +276,66 @@ Dialog จะแสดง:
    - License ยังใช้งานได้ (ถ้าเป็น update)
    - ฟีเจอร์หลักทำงานได้
 
-### ขั้นตอนที่ 4: เปิดใช้งาน (สำหรับการติดตั้งครั้งแรก)
+### ขั้นตอนที่ 4: ติดตั้ง FFmpeg (จำเป็น - ถ้า Admin ไม่ได้ bundle)
 
-#### 4.1 เปิดแอปครั้งแรก
+⚠️ **สำคัญ**: Desktop App ต้องการ FFmpeg เพื่อทำงานกับวิดีโอ
+
+> **ถ้า Admin bundle FFmpeg เข้าไปใน executable แล้ว**: คุณไม่ต้องทำขั้นตอนนี้ ข้ามไปขั้นตอนที่ 5 ได้เลย
+
+**ถ้า Admin ไม่ได้ bundle FFmpeg**: คุณต้องติดตั้ง FFmpeg แยกตามขั้นตอนด้านล่าง
+
+#### 4.1 วิธีที่ 1: ติดตั้ง FFmpeg แบบ Global (แนะนำ)
+
+1. ดาวน์โหลด FFmpeg:
+   - ไปที่ https://ffmpeg.org/download.html
+   - เลือก Windows builds (เช่น https://www.gyan.dev/ffmpeg/builds/)
+   - ดาวน์โหลด "ffmpeg-release-essentials.zip"
+
+2. Extract ไฟล์:
+   - Extract ไฟล์ zip ไปยังโฟลเดอร์ (เช่น `C:\ffmpeg`)
+
+3. เพิ่มเข้า PATH:
+   - เปิด **System Properties** → **Environment Variables**
+   - ใน **System Variables** หา **Path** → คลิก **Edit**
+   - คลิก **New** → ใส่ path ไปยังโฟลเดอร์ `bin` ของ FFmpeg (เช่น `C:\ffmpeg\bin`)
+   - คลิก **OK** ทั้งหมด
+
+4. ตรวจสอบการติดตั้ง:
+   - เปิด Command Prompt ใหม่
+   - พิมพ์ `ffmpeg -version`
+   - ถ้าแสดงเวอร์ชั่น FFmpeg แสดงว่าติดตั้งสำเร็จ
+
+#### 4.2 วิธีที่ 2: ตั้งค่า Path ในแอป (ไม่ต้องเพิ่ม PATH)
+
+1. ดาวน์โหลดและ Extract FFmpeg (ตามขั้นตอน 4.1.1-4.1.2)
+
+2. เปิด Desktop App
+
+3. เมื่อแอปแสดง warning "FFmpeg Not Found":
+   - คลิก **OK** เพื่อปิด warning
+   - แอปจะยังเปิดได้ แต่จะไม่สามารถ process วิดีโอได้
+
+4. ตั้งค่า FFmpeg Path:
+   - ในแอปจะมีปุ่มหรือเมนูสำหรับตั้งค่า FFmpeg path
+   - Browse ไปหาไฟล์ `ffmpeg.exe` ในโฟลเดอร์ที่ extract (เช่น `C:\ffmpeg\bin\ffmpeg.exe`)
+   - บันทึกการตั้งค่า
+
+> **หมายเหตุ**: วิธีที่ 1 (เพิ่ม PATH) แนะนำเพราะใช้งานง่ายกว่าและแอปจะ detect อัตโนมัติ
+
+### ขั้นตอนที่ 5: เปิดใช้งาน (สำหรับการติดตั้งครั้งแรก)
+
+#### 5.1 เปิดแอปครั้งแรก
 
 1. เปิด Desktop App
 2. จะแสดง **Activation Window** อัตโนมัติ
 
-#### 4.2 ใส่ License Key
+#### 5.2 ใส่ License Key
 
 1. ใส่ **License Key** ที่ได้รับจาก Admin
 2. (Optional) ใส่ **Device Label** (เช่น "Office-PC-1")
 3. คลิกปุ่ม **"Activate License"**
 
-#### 4.3 ตรวจสอบการ Activate
+#### 5.3 ตรวจสอบการ Activate
 
 1. ถ้าสำเร็จ จะแสดงข้อความ "Activation successful"
 2. แอปจะเปิด Main Window
@@ -376,15 +467,50 @@ Dialog จะแสดง:
 2. Activate ใหม่ด้วย License Key เดิม
 3. ติดต่อ Admin ถ้ายังไม่ได้
 
+#### ปัญหา: FFmpeg ไม่พบหรือไม่ทำงาน
+
+**สาเหตุที่เป็นไปได้**:
+
+- FFmpeg ยังไม่ได้ติดตั้ง
+- FFmpeg ไม่อยู่ใน PATH
+- Path ที่ตั้งค่าไว้ไม่ถูกต้อง
+
+**วิธีแก้ไข**:
+
+1. **ตรวจสอบว่า FFmpeg ติดตั้งแล้ว**:
+   - เปิด Command Prompt
+   - พิมพ์ `ffmpeg -version`
+   - ถ้าแสดง "not recognized" แสดงว่ายังไม่ได้ติดตั้งหรือไม่อยู่ใน PATH
+
+2. **ติดตั้ง FFmpeg**:
+   - ดาวน์โหลดจาก https://ffmpeg.org/download.html
+   - Extract และเพิ่มเข้า PATH (ดูขั้นตอนที่ 4.1 ในส่วน User)
+
+3. **ตั้งค่า Path ในแอป**:
+   - ถ้าไม่ต้องการเพิ่ม PATH สามารถตั้งค่า path โดยตรงในแอปได้
+   - Browse ไปหา `ffmpeg.exe` และบันทึก
+
+4. **รีสตาร์ทแอป**:
+   - ปิดแอปและเปิดใหม่เพื่อให้ detect FFmpeg
+
 ---
 
 ## Checklist สำหรับ Admin
 
 ก่อนส่งไฟล์ให้ลูกค้า ตรวจสอบ:
 
+- [ ] **License Server deploy แล้ว** (จำเป็น)
+  - [ ] Supabase Database setup แล้ว
+  - [ ] License Server deploy บน server ที่เข้าถึงได้จาก internet
+  - [ ] ตั้งค่า API URL ใน Desktop App แล้ว (hardcode หรือ config)
+  - [ ] ทดสอบ activation จาก Desktop App แล้ว
+  - [ ] ดูรายละเอียดที่ `DEPLOYMENT_GUIDE.md`
 - [ ] อัพเดท `APP_VERSION` ในโค้ดแล้ว
+- [ ] **Bundle FFmpeg แล้ว** (แนะนำ - เพื่อความสะดวกของลูกค้า)
+  - [ ] ดาวน์โหลด FFmpeg และวางใน `desktop_app/ffmpeg/bin/`
+  - [ ] ตรวจสอบว่า `ffmpeg.exe` มีอยู่จริง
 - [ ] Build executable สำเร็จแล้ว
-- [ ] ทดสอบ executable แล้ว (เปิดได้, ทำงานได้)
+- [ ] ทดสอบ executable แล้ว (เปิดได้, ทำงานได้, FFmpeg ทำงานได้)
 - [ ] อัพโหลดไฟล์ไปยัง hosting แล้ว
 - [ ] ทดสอบ Download URL แล้ว (ดาวน์โหลดได้)
 - [ ] สร้าง Release ใน Admin Dashboard แล้ว
@@ -396,14 +522,24 @@ Dialog จะแสดง:
 
 ## Checklist สำหรับ User
 
-ก่อนติดตั้งเวอร์ชั่นใหม่ ตรวจสอบ:
+### สำหรับการติดตั้งครั้งแรก:
+
+- [ ] ดาวน์โหลดไฟล์ติดตั้งสำเร็จแล้ว
+- [ ] ติดตั้ง Desktop App แล้ว
+- [ ] **ติดตั้ง FFmpeg แล้ว** (จำเป็น - ถ้า Admin ไม่ได้ bundle FFmpeg)
+- [ ] ตรวจสอบว่า FFmpeg ทำงานได้ (`ffmpeg -version` ใน Command Prompt) (ถ้าติดตั้งแยก)
+- [ ] มี License Key
+- [ ] มี internet connection (สำหรับ activation)
+- [ ] เปิดแอปและ activate license สำเร็จแล้ว
+
+### สำหรับการอัพเดทเวอร์ชั่น:
 
 - [ ] ได้รับการแจ้งเตือนอัพเดทแล้ว
 - [ ] ดาวน์โหลดไฟล์สำเร็จแล้ว
 - [ ] ตรวจสอบไฟล์ว่าเป็นเวอร์ชั่นที่ถูกต้อง
 - [ ] ปิดแอปเวอร์ชั่นเก่าแล้ว
-- [ ] มี License Key (สำหรับการติดตั้งครั้งแรก)
-- [ ] มี internet connection (สำหรับ activation)
+- [ ] ติดตั้งเวอร์ชั่นใหม่สำเร็จแล้ว
+- [ ] ตรวจสอบว่าแอปทำงานได้ปกติ
 
 ---
 
@@ -413,3 +549,4 @@ Dialog จะแสดง:
 - **Admin Dashboard**: `http://localhost:3000/releases`
 - **API Documentation**: ดูที่ `license_server/app/routers/admin.py` และ `license_server/app/routers/public.py`
 - **Update Version Guide**: ดูที่ `UPDATE_VERSION_GUIDE.md`
+- **Deployment Guide**: ดูที่ `DEPLOYMENT_GUIDE.md` (สำหรับการ deploy License Server)

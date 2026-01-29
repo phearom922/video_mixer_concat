@@ -1,6 +1,5 @@
 """Main application entry point."""
 import sys
-import shutil
 from pathlib import Path
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import Qt
@@ -10,21 +9,14 @@ from app.services.config_service import config_service
 from app.services.license_guard import license_guard
 from app.services.logging_service import logger
 from app.utils.paths import ensure_directories
-
-
-def find_ffmpeg() -> str:
-    """Try to find FFmpeg in PATH."""
-    ffmpeg = shutil.which("ffmpeg")
-    if ffmpeg:
-        return ffmpeg
-    return None
+from app.utils.ffmpeg_helper import find_ffmpeg
 
 
 def check_ffmpeg():
     """Check if FFmpeg is available."""
     ffmpeg_path = config_service.get_ffmpeg_path()
     if not ffmpeg_path:
-        # Try to find in PATH
+        # Try to find FFmpeg (bundled first, then PATH)
         ffmpeg_path = find_ffmpeg()
         if ffmpeg_path:
             config_service.set_ffmpeg_path(ffmpeg_path)
@@ -50,8 +42,9 @@ def main():
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("FFmpeg Not Found")
-        msg.setText("FFmpeg is not installed or not found in PATH.")
+        msg.setText("FFmpeg is not found.")
         msg.setInformativeText(
+            "FFmpeg is required to process videos.\n"
             "Please install FFmpeg or configure the path in settings.\n"
             "You can download FFmpeg from https://ffmpeg.org/download.html"
         )

@@ -49,3 +49,51 @@ nul
 *.pyc
 *.pyo
 __pycache__/
+
+# Executables
+*.exe
+*.app
+*.dmg
+*.deb
+*.rpm
+
+# FFmpeg binaries (should be downloaded separately or bundled during build)
+desktop_app/app/ffmpeg/
+desktop_app/ffmpeg/
+
+# PyInstaller
+*.spec.bak
+*.manifest
+
+# Temporary/debug markdown files (keep only essential docs)
+FIX_*.md
+CRITICAL_*.md
+*_FIX_*.md
+*_RESTART_*.md
+URGENT_*.md
+RESTART_*.md
+fix_*.md
+*_VERIFICATION_*.md
+COMPLETE_FIX_*.md
+COMPREHENSIVE_FIX_*.md
+CORRECT_PROJECT_*.md
+update_to_*.py
+reload_*.py
+check_*.py
+create_*_user.py
+create_*_direct.py
+create_*_final.py
+create_*_now.py
+test_*.py
+verify_*.py
+setup_env.py
+
+# Keep essential documentation
+!README.md
+!DEPLOYMENT_GUIDE.md
+!DISTRIBUTION_GUIDE.md
+!UPDATE_VERSION_GUIDE.md
+!VERCEL_RAILWAY_DEPLOYMENT.md
+!VERCEL_RENDER_DEPLOYMENT.md
+!SETUP_GUIDE.md
+!QUICK_SETUP.md
