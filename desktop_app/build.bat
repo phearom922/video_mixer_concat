@@ -14,8 +14,18 @@ echo.
 REM Create icon.ico if it doesn't exist
 echo [1/4] Creating icon.ico...
 if not exist "icon.ico" (
-    echo Creating icon.ico from logo128x128.png...
-    python create_icon.py
+    REM Try to combine existing ICO files first (better quality)
+    if exist "app\ui\assets\256x256.ico" if exist "app\ui\assets\16x16.ico" (
+        echo Combining existing ICO files into icon.ico...
+        python combine_ico.py
+        if errorlevel 1 (
+            echo Failed to combine ICO files, trying create_icon.py...
+            python create_icon.py
+        )
+    ) else (
+        echo Creating icon.ico from logo128x128.png...
+        python create_icon.py
+    )
     if errorlevel 1 (
         echo WARNING: Failed to create icon.ico. Building without icon.
     )

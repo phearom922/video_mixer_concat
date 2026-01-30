@@ -14,8 +14,18 @@ echo ""
 # Create icon.ico if it doesn't exist
 echo "[1/4] Creating icon.ico..."
 if [ ! -f "icon.ico" ]; then
-    echo "Creating icon.ico from logo128x128.png..."
-    python create_icon.py
+    # Try to combine existing ICO files first
+    if [ -f "app/ui/assets/256x256.ico" ] && [ -f "app/ui/assets/16x16.ico" ]; then
+        echo "Combining existing ICO files into icon.ico..."
+        python combine_ico.py
+        if [ $? -ne 0 ]; then
+            echo "Failed to combine ICO files, trying create_icon.py..."
+            python create_icon.py
+        fi
+    else
+        echo "Creating icon.ico from logo128x128.png..."
+        python create_icon.py
+    fi
     if [ $? -ne 0 ]; then
         echo "WARNING: Failed to create icon.ico. Building without icon."
     fi
